@@ -4,7 +4,7 @@ import config from './const/config';
 const app = express();
 
 app.get('/', (req, res) => {
-    res.send('Feliz cumple santi');
+    res.send('Users microservice');
 });
 
 const port = process.env.PORT || config.port;
