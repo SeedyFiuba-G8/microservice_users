@@ -12,18 +12,17 @@ const client = new pg.Client({
 });
 
 app.get('/', (req, res) => {
-    res.send('Users microservice');
+    client.query('SELECT * FROM Users', (err, q_res) => {
+        if (err) throw err;
+        let result = '';
+        for (const row of q_res.rows) {
+            result += JSON.stringify(row);
+        }
+        res.send(result);
+    });
 });
 
 const port = process.env.PORT || config.port;
-
-client.query('SELECT * FROM Users', (err, res) => {
-    if (err) throw err;
-    for (const row of res.rows) {
-        console.log(JSON.stringify(row));
-    }
-    client.end();
-});
 
 app.listen(port, () => {
     console.log('The application is listening on port 3000!');
