@@ -20,6 +20,7 @@ app.get('/', (req, res) => {
         }
         res.send(result);
     });
+    res.send('Users microservice');
 });
 
 const port = process.env.PORT || config.port;
