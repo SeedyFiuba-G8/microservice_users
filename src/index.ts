@@ -12,7 +12,7 @@ const client = new pg.Client({
 });
 
 app.get('/', (req, res) => {
-    client.query('SELECT * FROM Users', (err, q_res) => {
+    client.query('SELECT * FROM Users;', (err, q_res) => {
         if (err) res.send('Error');
         for (const row of q_res.rows) {
             console.log(JSON.stringify(row));
