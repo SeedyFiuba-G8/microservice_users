@@ -3,6 +3,14 @@ import config from './const/config';
 import pg from 'pg';
 
 const app = express();
+/*
+const client = new pg.Client({
+    connectionString: process.env.DATABASE_URL,
+    ssl: {
+        rejectUnauthorized: false,
+    },
+});
+*/
 
 const client = new pg.Client({
     connectionString: process.env.DATABASE_URL,
@@ -12,13 +20,10 @@ const client = new pg.Client({
 });
 
 app.get('/', (req, res) => {
-    client.query('SELECT * FROM Users;', (err, q_res) => {
-        if (err) res.send('Error');
-        for (const row of q_res.rows) {
-            console.log(JSON.stringify(row));
-        }
+    client.query('SELECT * FROM Users;', (qerr, qres) => {
+        console.log(qres);
+        res.send(JSON.stringify(qres.rows));
     });
-    res.send('Users microservice');
 });
 
 const port = process.env.PORT || config.port;
