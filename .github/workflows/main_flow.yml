@@ -2,10 +2,6 @@ name: CI
 on:
     push:
         branches:
-            - dev
-    pull_request:
-        branches:
-            - dev
             - main
 
 jobs:
@@ -47,12 +43,12 @@ jobs:
         steps:
             - uses: actions/checkout@master
             - name: Build Container
-              run: docker build -t users_microservice_dev .
+              run: docker build -t users_microservice .
             - name: Log in to Heroku Container Registry
               run: heroku container:login
             - name: Tag Container
-              run: docker tag users_microservice_dev registry.heroku.com/sf-tdp2-users-dev/web
+              run: docker tag users_microservice registry.heroku.com/sf-tdp2-users/web
             - name: Push Container
-              run: docker push registry.heroku.com/sf-tdp2-users-dev/web
+              run: docker push registry.heroku.com/sf-tdp2-users/web
             - name: Release Container
-              run: heroku container:release web --app sf-tdp2-users-dev
+              run: heroku container:release web --app sf-tdp2-users
