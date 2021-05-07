@@ -41,6 +41,8 @@ jobs:
             - uses: actions/checkout@master
             - name: Build Container
               run: docker build -t users_microservice_dev .
+            - name: Log in to Heroku Container Registry
+              run: heroku container:login
             - name: Tag Container
               run: docker tag users_microservice_dev registry.heroku.com/sf-tdp2-users-dev/web
             - name: Push Container
