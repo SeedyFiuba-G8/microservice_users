@@ -33,8 +33,17 @@ jobs:
               run: npm run lint
     build_and_push:
         runs-on: ubuntu-latest
+        env:
+            HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+            HEROKU_EMAIL: ${{ secrets.HEROKU_MAIL }}
         needs: [run_tests, async_lint]
         steps:
             - uses: actions/checkout@master
             - name: Build Container
               run: docker build -t users_microservice_dev .
+            - name: Tag Container
+              run: docker tag users_microservice_dev registry.heroku.com/sf-tdp2-users-dev/web
+            - name: Push Container
+              run: docker push registry.heroku.com/sf-tdp2-users-dev/web
+            - name: Release Container
+              run: heroku container:release web --app sf-tdp2-users-dev
