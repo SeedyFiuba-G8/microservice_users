@@ -3,19 +3,10 @@ import config from './const/config';
 import pg from 'pg';
 
 const app = express();
-/*
 const client = new pg.Client({
     connectionString: process.env.DATABASE_URL,
-    ssl: {
-        rejectUnauthorized: false,
-    },
-});
-*/
-const client = new pg.Client({
-    connectionString: process.env.DATABASE_URL,
-    ssl: {
-        rejectUnauthorized: false,
-    },
+    query_timeout: 1000,
+    statement_timeout: 1000,
 });
 client.connect((err) => {
     if (err) {
@@ -25,10 +16,12 @@ client.connect((err) => {
     }
 });
 
-app.get('/', (req, res) => {
+app.get('/users', (req, res) => {
     client.query('SELECT * FROM Users;', (qerr, qres) => {
-        console.log(qres);
-        res.send(JSON.stringify(qres.rows));
+        if (qerr) {
+            res.send('DB is down');
+        }
+        res.send(qres.rows);
     });
 });
 

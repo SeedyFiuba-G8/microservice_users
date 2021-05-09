@@ -1,0 +1,74 @@
+openapi: '3.0.2'
+info:
+  title: Users Microservice
+  version: '1.0'
+paths:
+  /register:
+    post:
+      summary: Register new users
+      description: Allows to add new users to the database
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                first_name:
+                  type: string
+                last_name:
+                  type: string
+                password:
+                  type: string
+      responses:
+        "200":
+          description: "User was registered successfully"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  email:
+                    type: string
+                  first_name:
+                    type: string
+                  last_name:
+                    type: string
+        "400":
+          description: "It was not possible to register the user. Error code 1 means email is wrong. Error code 2 means password is wrong. Error code 3 means something else is wrong."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error_code: 
+                    type: integer
+  /login:
+    post:
+      summary: Logs an user in
+      description: Allows an user to log in, returning a unique session token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        "200":
+          description: "User was logged in successfully"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  session_token:
+                    type: string
+        "400":
+          description: "It was not possible to log the user in"
