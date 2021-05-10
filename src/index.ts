@@ -5,6 +5,9 @@ import pg from 'pg';
 const app = express();
 const client = new pg.Client({
     connectionString: process.env.DATABASE_URL,
+    ssl: {
+        rejectUnauthorized: false,
+    },
     query_timeout: 3000,
     statement_timeout: 3000,
 });
