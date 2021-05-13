@@ -1,0 +1,26 @@
+version: '3'
+
+services:
+    microservice-users:
+        build: ./
+        container_name: microservice-users
+        environment:
+            - PORT=3000
+            - DATABASE_URL=postgres://postgres:postgres@psql-users-db:5432/postgres
+        networks:
+            - dev-net
+        ports:
+            - 3000:3000
+        depends_on:
+            - psql-users-db
+
+    psql-users-db:
+        image: mauro7x/seedy-fiuba-users-dev-db
+        container_name: psql-users-db
+        environment:
+            - POSTGRES_PASSWORD=postgres
+        networks:
+            - dev-net
+networks:
+    dev-net:
+        driver: bridge
