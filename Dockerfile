@@ -3,7 +3,6 @@ FROM node:14
 WORKDIR /usr/src/app
 
 RUN apt-get -y update
-RUN apt-get -y apt-utils
 RUN apt-get -y install postgresql-client
 
 COPY . .

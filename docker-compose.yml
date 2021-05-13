@@ -7,6 +7,7 @@ services:
         environment:
             - PORT=3000
             - DATABASE_URL=postgres://postgres:postgres@psql-users-db:5432/postgres
+            - POSTGRES_PASSWORD=postgres
         networks:
             - dev-net
         ports:

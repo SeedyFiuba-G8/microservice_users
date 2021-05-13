@@ -5,37 +5,37 @@ import pg from 'pg';
 const app = express();
 
 const client = new pg.Client({
-	connectionString: process.env.DATABASE_URL,
-	ssl: {
+    connectionString: process.env.DATABASE_URL,
+    /*ssl: {
 		rejectUnauthorized: false,
-	},
-	query_timeout: 3000,
-	statement_timeout: 3000,
+	},*/
+    query_timeout: 3000,
+    statement_timeout: 3000,
 });
 
 client.connect((err) => {
-	if (err) {
-		console.error('connection error', err.stack);
-	} else {
-		console.log('connected');
-	}
+    if (err) {
+        console.error('connection error', err.stack);
+    } else {
+        console.log('connected');
+    }
 });
 
 app.get('/health', (req, res) => {
-	res.send('UP');
+    res.send('UP');
 });
 
 app.get('/users', (req, res) => {
-	client.query('SELECT * FROM Users;', (qerr, qres) => {
-		if (qerr) {
-			res.send('DB is down');
-		}
-		res.send(qres.rows);
-	});
+    client.query('SELECT * FROM Users;', (qerr, qres) => {
+        if (qerr) {
+            res.send('DB is down');
+        }
+        res.send(qres.rows);
+    });
 });
 
 const port = process.env.PORT || config.port;
 
 app.listen(port, () => {
-	console.log('The application is listening on port 3000!');
+    console.log('The application is listening on port 3000!');
 });
