@@ -1,28 +1,36 @@
 {
-	"name": "microservice_users",
-	"version": "1.0.0",
-	"description": "![CI](https://github.com/SeedyFiuba-G8/microservice_users/actions/workflows/main.yml/badge.svg)  [![codecov](https://codecov.io/gh/SeedyFiuba-G8/microservice_users/branch/main/graph/badge.svg?token=IEZBYB52SY)](https://codecov.io/gh/SeedyFiuba-G8/microservice_users)",
-	"main": "./src/main.js",
-	"directories": {
-		"test": "test"
-	},
-	"scripts": {
-		"start": "node .",
-		"test": "echo \"Error: no test specified\" && exit 1"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/SeedyFiuba-G8/microservice_users.git"
-	},
-	"keywords": [],
-	"author": "",
-	"license": "ISC",
-	"bugs": {
-		"url": "https://github.com/SeedyFiuba-G8/microservice_users/issues"
-	},
-	"homepage": "https://github.com/SeedyFiuba-G8/microservice_users#readme",
-	"dependencies": {
-		"dependable": "^1.1.0",
-		"express": "^4.17.1"
-	}
+  "name": "microservice_users",
+  "version": "1.0.0",
+  "description": "![CI](https://github.com/SeedyFiuba-G8/microservice_users/actions/workflows/main.yml/badge.svg)  [![codecov](https://codecov.io/gh/SeedyFiuba-G8/microservice_users/branch/main/graph/badge.svg?token=IEZBYB52SY)](https://codecov.io/gh/SeedyFiuba-G8/microservice_users)",
+  "main": "./src/main.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "start": "node .",
+    "lint": "eslint . --ext .js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SeedyFiuba-G8/microservice_users.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SeedyFiuba-G8/microservice_users/issues"
+  },
+  "homepage": "https://github.com/SeedyFiuba-G8/microservice_users#readme",
+  "dependencies": {
+    "dependable": "^1.1.0",
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "eslint": "^7.26.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-import": "^2.23.2",
+    "eslint-plugin-prettier": "^3.4.0",
+    "prettier": "^2.3.0"
+  }
 }
