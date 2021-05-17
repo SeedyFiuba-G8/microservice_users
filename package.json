@@ -8,9 +8,12 @@
   },
   "scripts": {
     "start": "node .",
-    "lint": "eslint . --ext .js",
+    "start:nodemon": "nodemon .",
+    "lint": "eslint src test --ext .js",
+    "format": "prettier --write '*.js' '{src,test}/**/*.js'",
     "test": "jest",
-    "test:coverage": "jest --coverage"
+    "test:coverage": "jest --coverage",
+    "tdd": "jest --watch"
   },
   "repository": {
     "type": "git",
@@ -25,7 +28,8 @@
   "homepage": "https://github.com/SeedyFiuba-G8/microservice_users#readme",
   "dependencies": {
     "dependable": "^1.1.0",
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "expressify": "^2.0.0"
   },
   "devDependencies": {
     "eslint": "^7.26.0",
@@ -34,6 +38,7 @@
     "eslint-plugin-import": "^2.23.2",
     "eslint-plugin-prettier": "^3.4.0",
     "jest": "^26.6.3",
+    "nodemon": "^2.0.7",
     "prettier": "^2.3.0"
   }
 }

@@ -1,11 +1,9 @@
 const express = require('express');
 
-module.exports = function $app() {
+module.exports = function $app(router) {
   const app = express();
 
-  app.get('/', (req, res) => res.send('Root!'));
-
-  app.get('/ping', (req, res) => res.send('Pong!'));
+  app.use(router);
 
   return app;
 };

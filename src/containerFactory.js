@@ -3,7 +3,13 @@ const path = require('path');
 
 function createContainer() {
   const container = dependable.container();
-  const entries = ['app.js'];
+  const entries = [
+    'app.js',
+    'controllers',
+    'middlewares',
+    'routes',
+    'services'
+  ];
 
   // eslint-disable-next-line prefer-arrow-callback
   container.register('log', function log() {
