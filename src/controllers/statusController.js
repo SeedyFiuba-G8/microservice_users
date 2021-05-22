@@ -1,17 +1,17 @@
-const expressify = require('expressify')();
+module.exports = function statusController(usersRepository, config) {
+  async function health(req, res) {
+    console.log('config:', config);
+    const status = await usersRepository.getHealth();
 
-module.exports = function statusController() {
-  function health(req, res) {
-    // check db and gateways health (with Promises)
-    return res.send('health not implemented yet');
+    return res.json(status);
   }
 
   function ping(req, res) {
     return res.json({ status: 'ok' });
   }
 
-  return expressify({
+  return {
     health,
     ping
-  });
+  };
 };

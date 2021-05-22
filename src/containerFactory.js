@@ -1,4 +1,5 @@
 const dependable = require('dependable');
+const knex = require('knex');
 const path = require('path');
 
 function createContainer() {
@@ -7,12 +8,28 @@ function createContainer() {
     'app.js',
     'controllers',
     'middlewares',
+    'repositories',
     'routes',
     'services'
   ];
 
   // eslint-disable-next-line prefer-arrow-callback
-  container.register('log', function log() {
+  container.register('config', function $config() {
+    if (!process.env.NODE_CONFIG_DIR) {
+      process.env.NODE_CONFIG_DIR = `${__dirname}/../config`;
+    }
+
+    // eslint-disable-next-line global-require
+    return require('config');
+  });
+
+  // eslint-disable-next-line prefer-arrow-callback
+  container.register('knex', function $knex(config) {
+    return knex(config.knex);
+  });
+
+  // eslint-disable-next-line prefer-arrow-callback
+  container.register('log', function $log() {
     return (msg) => console.log(msg);
   });
 
