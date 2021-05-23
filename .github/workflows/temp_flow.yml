@@ -64,6 +64,9 @@ jobs:
       - name: Tag container
         run: docker tag users_microservice registry.heroku.com/sf-tdp2-users-temp/web
 
+      - name: Set NODE_ENV to production
+        run: heroku config:set NODE_ENV=production
+
       - name: Push container
         run: docker push registry.heroku.com/sf-tdp2-users-temp/web
 

@@ -6,14 +6,8 @@ module.exports = function usersRepository(knex) {
     return knex
       .raw('SELECT version()')
       .timeout(timeout)
-      .then((log) => {
-        console.log('then:', log);
-        return true;
-      })
-      .catch((err) => {
-        console.log('catch:', err);
-        return false;
-      });
+      .then(() => true)
+      .catch(() => false);
   }
 
   return {

@@ -1,9 +1,12 @@
-module.exports = function statusController(usersRepository, config) {
+module.exports = function statusController(usersRepository) {
   async function health(req, res) {
-    console.log('config:', config);
-    const status = await usersRepository.getHealth();
+    const dbStatus = await usersRepository.getHealth();
 
-    return res.json(status);
+    const response = {
+      database: dbStatus ? 'UP' : 'DOWN'
+    };
+
+    return res.json(response);
   }
 
   function ping(req, res) {
