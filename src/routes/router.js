@@ -1,21 +1,20 @@
 const express = require('express');
 
-module.exports = function router(statusController) {
+module.exports = function router(statusController, usersController) {
   return (
     express
       .Router()
+      // Example routes
+      .get('/', (req, res) => res.send('Root\n'))
 
       // Ping and Health
       .get('/ping', statusController.ping)
 
       .get('/health', statusController.health)
 
-      // Example routes
-      .get('/', (req, res) => res.send('Root\n'))
+      // ROUTES
 
-      .get('/users', (req, res) => {
-        res.send('Users\n');
-      })
+      .get('/users', usersController.getAll)
 
       .get('/users/:userId', (req, res) => {
         const { userId } = req.params;
