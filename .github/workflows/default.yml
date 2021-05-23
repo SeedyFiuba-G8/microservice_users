@@ -1,10 +1,9 @@
 name: CI
 
 on:
-  push:
-    branches: [dev]
+  push
   pull_request:
-    branches: [dev]
+    branches: [main, dev]
 
 jobs:
   run_eslint:
@@ -42,11 +41,44 @@ jobs:
       - name: Run tests
         run: npm run test:coverage
 
+      # Runs only when push/pr to main or dev
       - uses: codecov/codecov-action@v1
+        if: ${{ (github.ref == 'refs/heads/main') || (github.ref == 'refs/heads/dev') }}
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
-  build_and_push:
+  # Runs only when push/pr to main
+  deploy_prod:
+    if: ${{ github.ref == 'refs/heads/main' }}
+    runs-on: ubuntu-latest
+    env:
+      HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+      HEROKU_EMAIL: ${{ secrets.HEROKU_MAIL }}
+    needs: [run_eslint, run_tests]
+    steps:
+      - uses: actions/checkout@master
+
+      - name: Build container
+        run: docker build -t users_microservice .
+
+      - name: Log in to Heroku Container Registry
+        run: heroku container:login
+
+      - name: Tag container
+        run: docker tag users_microservice registry.heroku.com/sf-tdp2-users/web
+
+      - name: Push container
+        run: docker push registry.heroku.com/sf-tdp2-users/web
+
+      - name: Release container
+        run: heroku container:release web --app sf-tdp2-users
+
+      - name: Set NODE_ENV to production
+        run: heroku config:set NODE_ENV=production --app sf-tdp2-users
+
+  # Runs only when push/pr to dev
+  deploy_dev:
+    if: ${{ github.ref == 'refs/heads/dev' }}
     runs-on: ubuntu-latest
     env:
       HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
@@ -70,5 +102,5 @@ jobs:
       - name: Release container
         run: heroku container:release web --app sf-tdp2-users-dev
 
-      - name: Set NODE_ENV to production
-        run: heroku config:set NODE_ENV=production --app sf-tdp2-users-dev
+      - name: Set NODE_ENV to development
+        run: heroku config:set NODE_ENV=development --app sf-tdp2-users-dev
