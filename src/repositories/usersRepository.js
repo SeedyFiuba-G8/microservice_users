@@ -9,20 +9,16 @@ module.exports = function usersRepository(knex) {
   }
 
   /**
-   * Health status
+   * Gets db version
    *
-   * @returns {Promise<boolean>}
+   * @returns {Promise}
    */
-  function getHealth(timeout = 1000) {
-    return knex
-      .raw('SELECT version()')
-      .timeout(timeout)
-      .then(() => true)
-      .catch(() => false);
+  function getVersion() {
+    return knex.raw('SELECT version()');
   }
 
   return {
     getAll,
-    getHealth
+    getVersion
   };
 };
