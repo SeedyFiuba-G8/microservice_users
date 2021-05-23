@@ -1,10 +1,10 @@
-name: CI_temp
+name: CI
 
 on:
   push:
-    branches: [INFRA/restructure]
+    branches: [main]
   pull_request:
-    branches: [INFRA/restructure]
+    branches: [main]
 
 jobs:
   run_eslint:
@@ -49,8 +49,8 @@ jobs:
   build_and_push:
     runs-on: ubuntu-latest
     env:
-      HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY_TEMP }}
-      HEROKU_EMAIL: ${{ secrets.HEROKU_MAIL_TEMP }}
+      HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+      HEROKU_EMAIL: ${{ secrets.HEROKU_MAIL }}
     needs: [run_eslint, run_tests]
     steps:
       - uses: actions/checkout@master
@@ -62,13 +62,13 @@ jobs:
         run: heroku container:login
 
       - name: Tag container
-        run: docker tag users_microservice registry.heroku.com/sf-tdp2-users-temp/web
+        run: docker tag users_microservice registry.heroku.com/sf-tdp2-users/web
 
       - name: Push container
-        run: docker push registry.heroku.com/sf-tdp2-users-temp/web
+        run: docker push registry.heroku.com/sf-tdp2-users/web
 
       - name: Release container
-        run: heroku container:release web --app sf-tdp2-users-temp
+        run: heroku container:release web --app sf-tdp2-users
 
       - name: Set NODE_ENV to production
-        run: heroku config:set NODE_ENV=production --app sf-tdp2-users-temp
+        run: heroku config:set NODE_ENV=production --app sf-tdp2-users
