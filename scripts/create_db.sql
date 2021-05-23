@@ -1,0 +1,5 @@
+-- Create database
+
+DROP DATABASE IF EXISTS users;
+
+CREATE DATABASE users WITH ENCODING 'UTF8' TEMPLATE template0;
