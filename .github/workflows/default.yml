@@ -1,9 +1,6 @@
 name: CI
 
-on:
-  push
-  pull_request:
-    branches: [main, dev]
+on: [push, pull_request]
 
 jobs:
   run_eslint:
