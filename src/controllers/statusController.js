@@ -1,6 +1,6 @@
-module.exports = function statusController(usersRepository) {
+module.exports = function statusController(dbService) {
   async function health(req, res) {
-    const dbStatus = await usersRepository.getHealth();
+    const dbStatus = await dbService.getDatabaseHealth();
 
     const response = {
       database: dbStatus ? 'UP' : 'DOWN'
