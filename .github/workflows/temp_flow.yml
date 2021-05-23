@@ -71,4 +71,4 @@ jobs:
         run: heroku container:release web --app sf-tdp2-users-temp
 
       - name: Set NODE_ENV to production
-        run: heroku config:set NODE_ENV=production
+        run: heroku config:set NODE_ENV=production --app sf-tdp2-users-temp
