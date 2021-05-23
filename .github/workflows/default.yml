@@ -99,5 +99,5 @@ jobs:
       - name: Release container
         run: heroku container:release web --app sf-tdp2-users-dev
 
-      - name: Set NODE_ENV to development
-        run: heroku config:set NODE_ENV=development --app sf-tdp2-users-dev
+      - name: Set NODE_ENV to dev
+        run: heroku config:set NODE_ENV=dev --app sf-tdp2-users-dev
