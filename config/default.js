@@ -10,20 +10,17 @@ module.exports = {
     connection: {
       connectionString: _.get(process.env, 'DATABASE_URL')
     }
+  },
+  log: {
+    console: {
+      enabled: true,
+      level: 'info',
+      timestamp: true,
+      prettyPrint: true,
+      json: false,
+      colorize: true,
+      stringify: false,
+      label: 'microservice_users'
+    }
   }
-  // logger: {
-  //   console: {
-  //     enabled: true,
-  //     level: 'info',
-  //     timestamp: true,
-  //     prettyPrint: true
-  //   },
-  //   syslog: {
-  //     enabled: false,
-  //     protocol: 'udp4',
-  //     path: '/dev/log',
-  //     app_name: 'asset-portal-service',
-  //     facility: 'local6'
-  //   }
-  // }
 };
