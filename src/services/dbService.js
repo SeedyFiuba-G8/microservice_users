@@ -10,7 +10,7 @@ module.exports = function dbService(logger, usersRepository) {
       .timeout(timeout)
       .then(() => true)
       .catch((err) => {
-        logger.error('dbService: ', err);
+        logger.error('dbService:', err);
         return false;
       });
   }

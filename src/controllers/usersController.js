@@ -1,16 +1,19 @@
-module.exports = function usersController(usersService, usersUtils) {
+module.exports = function usersController(usersService, usersUtils, logger) {
   /**
    * Fetchs all users data from db
    *
    * @returns {Promise}
    */
-  async function getAll(req, res) {
+  async function getAll(req, res, next) {
     let allUsers;
 
     try {
       allUsers = await usersService.getAll();
     } catch (err) {
-      return res.status(409).json(err);
+      logger.warn('usersService.getAll:', err);
+      err.status = 409;
+      err.name = 'Error in usersService.getAll';
+      return next(err);
     }
 
     const response = {
