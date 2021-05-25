@@ -4,7 +4,8 @@ DROP TABLE IF EXISTS public.users;
 
 CREATE TABLE public.users (
 	-- Name				Type
-	email				VARCHAR(40)					NOT NULL	PRIMARY KEY,
+	id					VARCHAR(36)					NOT NULL	PRIMARY KEY,
+	email				VARCHAR(40)					NOT NULL,
 	first_name			VARCHAR(20)					NOT NULL,
 	last_name			VARCHAR(20)					NOT NULL,
 	pass				VARCHAR(20)					NOT NULL,
