@@ -8,6 +8,14 @@ info:
     name: Learn more
     url: 'https://github.com/orgs/SeedyFiuba-G8/'
 
+servers:
+  - url: http://sf-tdp2-users.herokuapp.com/
+    description: 'Production'
+  - url: http://sf-tdp2-users-dev.herokuapp.com/
+    description: 'Staging'
+  - url: http://localhost:3000/
+    description: 'Local development'
+
 tags:
   - name: Admin
     description: 'Admin operations'
@@ -51,7 +59,7 @@ paths:
               schema:
                 type: object
                 properties:
-                  uuid:
+                  id:
                     type: string
                     example: '670b9562-b30d-52d5-b827-655787665500'
                   token:
@@ -194,7 +202,7 @@ paths:
               schema:
                 type: object
                 properties:
-                  uuid:
+                  id:
                     type: string
                     example: '670b9562-b30d-52d5-b827-655787665500'
                   token:
@@ -309,7 +317,7 @@ paths:
             schema:
               type: object
               properties:
-                uuid:
+                id:
                   type: string
                   example: '670b9562-b30d-52d5-b827-655787665500'
                 token:
@@ -364,7 +372,7 @@ paths:
                     items:
                       type: object
                       properties:
-                        uuid:
+                        id:
                           type: string
                           example: '670b9562-b30d-52d5-b827-655787665500'
                         first_name:
@@ -394,8 +402,16 @@ paths:
         - Status
       operationId: ping
       responses:
-        204:
+        200:
           description: 'Server is active.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: 'OK'
 
   /health:
     get:
@@ -403,7 +419,7 @@ paths:
         - Status
       operationId: health
       responses:
-        204:
+        200:
           description: 'Microservice general health state reported.'
           content:
             application/json:
