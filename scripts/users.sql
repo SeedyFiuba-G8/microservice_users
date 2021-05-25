@@ -12,6 +12,3 @@ CREATE TABLE public.users (
 	profile_pic_url		VARCHAR(255),
 	signup_date			TIMESTAMP WITH TIME ZONE	NOT NULL	DEFAULT CURRENT_TIMESTAMP(2)
 );
-
-ALTER TABLE public.users
-    OWNER to postgres;
