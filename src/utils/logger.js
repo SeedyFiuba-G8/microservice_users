@@ -10,8 +10,7 @@ module.exports = function loggerFactory(config) {
 
   const getFormatter = () =>
     winston.format.printf(
-      (info) =>
-        `[microservice-users] ${info.timestamp} - ${info.level}: ${info.message}`
+      (info) => `[${info.timestamp}] (${info.level}) ${info.message}`
     );
 
   const addConsoleTransport = (logger) => {
