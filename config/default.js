@@ -13,8 +13,8 @@ module.exports = {
   },
   log: {
     console: {
-      enabled: false,
-      level: 'error',
+      enabled: true,
+      level: 'info',
       timestamp: true,
       prettyPrint: true,
       json: false,
