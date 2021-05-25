@@ -3,5 +3,11 @@ module.exports = {
     connection: {
       ssl: { rejectUnauthorized: false }
     }
+  },
+  log: {
+    console: {
+      enabled: true,
+      level: 'info'
+    }
   }
 };

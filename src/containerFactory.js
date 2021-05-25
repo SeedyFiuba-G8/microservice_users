@@ -10,7 +10,8 @@ function createContainer() {
     'middlewares',
     'repositories',
     'routes',
-    'services'
+    'services',
+    'utils'
   ];
 
   // eslint-disable-next-line prefer-arrow-callback
@@ -26,11 +27,6 @@ function createContainer() {
   // eslint-disable-next-line prefer-arrow-callback
   container.register('knex', function $knex(config) {
     return knex(config.knex);
-  });
-
-  // eslint-disable-next-line prefer-arrow-callback
-  container.register('log', function $log() {
-    return (msg) => console.log(msg);
   });
 
   entries.forEach((entry) => container.load(path.join(__dirname, entry)));
