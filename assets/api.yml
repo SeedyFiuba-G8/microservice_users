@@ -9,10 +9,12 @@ info:
     url: 'https://github.com/orgs/SeedyFiuba-G8/'
 
 servers:
-  - url: https://sf-tdp2-users.herokuapp.com/
+  - url: http://sf-tdp2-users.herokuapp.com/
     description: 'Production'
-  - url: https://sf-tdp2-users-dev.herokuapp.com/
-    description: 'Development'
+  - url: http://sf-tdp2-users-dev.herokuapp.com/
+    description: 'Staging'
+  - url: http://localhost:3000/
+    description: 'Local development'
 
 tags:
   - name: Admin
