@@ -4,7 +4,7 @@ function main() {
   containerFactory
     .createContainer()
     // eslint-disable-next-line prefer-arrow-callback
-    .resolve(function start(app, config, logger, dbService) {
+    .resolve(function start(app, config, logger) {
       const { port, host } = config.express;
 
       app.listen(port, host, () => {
