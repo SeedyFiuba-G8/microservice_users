@@ -8,7 +8,7 @@
   },
   "scripts": {
     "start": "node .",
-    "start:nodemon": "nodemon .",
+    "dev": "NODE_ENV=development nodemon .",
     "lint": "eslint src test --ext .js",
     "format": "prettier --write '*.js' '{src,test}/**/*.js'",
     "test": "jest",

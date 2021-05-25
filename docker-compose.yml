@@ -7,8 +7,8 @@ services:
     container_name: users
     environment:
       - PORT=3000
-      - DATABASE_URL=postgres://postgres:postgres@users-db:5432/postgres
-      - NODE_ENV=local
+      - DATABASE_URL=postgres://postgres:postgres@users-db:5432/sf-users
+      - NODE_ENV=development
     networks:
       - dev-net
     ports:
