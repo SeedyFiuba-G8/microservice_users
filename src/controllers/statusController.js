@@ -6,11 +6,15 @@ module.exports = function statusController(dbService) {
       database: dbStatus ? 'UP' : 'DOWN'
     };
 
-    return res.json(response);
+    return res.status(200).json(response);
   }
 
   function ping(req, res) {
-    return res.json({ status: 'ok' });
+    const response = {
+      status: 'ok'
+    };
+
+    return res.status(200).json(response);
   }
 
   return {

@@ -1,6 +1,6 @@
 const express = require('express');
 
-module.exports = function router(statusController, usersController) {
+module.exports = function apiRouter(statusController, usersController) {
   return (
     express
       .Router()

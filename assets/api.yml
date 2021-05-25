@@ -8,6 +8,12 @@ info:
     name: Learn more
     url: 'https://github.com/orgs/SeedyFiuba-G8/'
 
+servers:
+  - url: https://sf-tdp2-users.herokuapp.com/
+    description: 'Production'
+  - url: https://sf-tdp2-users-dev.herokuapp.com/
+    description: 'Development'
+
 tags:
   - name: Admin
     description: 'Admin operations'
@@ -394,8 +400,16 @@ paths:
         - Status
       operationId: ping
       responses:
-        204:
+        200:
           description: 'Server is active.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: 'OK'
 
   /health:
     get:
@@ -403,7 +417,7 @@ paths:
         - Status
       operationId: health
       responses:
-        204:
+        200:
           description: 'Microservice general health state reported.'
           content:
             application/json:

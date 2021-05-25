@@ -1,10 +1,14 @@
 const express = require('express');
 
-module.exports = function $app(loggingMiddleware, router) {
+module.exports = function $app(loggingMiddleware, docsRouter, apiRouter) {
   const app = express();
 
+  // Middleware
   app.use(loggingMiddleware);
-  app.use(router);
+
+  // Routers
+  app.use(docsRouter);
+  app.use(apiRouter);
 
   return app;
 };

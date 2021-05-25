@@ -33,7 +33,9 @@
     "knex": "^0.95.6",
     "lodash": "^4.17.21",
     "pg": "^8.6.0",
-    "winston": "^3.3.3"
+    "swagger-ui-express": "^4.1.6",
+    "winston": "^3.3.3",
+    "yamljs": "^0.3.0"
   },
   "devDependencies": {
     "eslint": "^7.26.0",

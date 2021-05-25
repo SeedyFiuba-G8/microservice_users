@@ -10,10 +10,10 @@ module.exports = function usersController(usersService) {
     try {
       allUsers = await usersService.getAll();
     } catch (err) {
-      res.status(400).json(err);
+      res.status(409).json(err);
     }
 
-    return res.json(allUsers);
+    return res.status(200).json(allUsers);
   }
 
   return {
