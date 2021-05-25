@@ -1,4 +1,4 @@
-module.exports = function dbService(usersRepository) {
+module.exports = function dbService(logger, usersRepository) {
   /**
    * Health status
    *
@@ -10,7 +10,7 @@ module.exports = function dbService(usersRepository) {
       .timeout(timeout)
       .then(() => true)
       .catch((err) => {
-        console.log('err:', err);
+        logger.error('dbService: ', err);
         return false;
       });
   }
