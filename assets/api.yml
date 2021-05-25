@@ -57,7 +57,7 @@ paths:
               schema:
                 type: object
                 properties:
-                  uuid:
+                  id:
                     type: string
                     example: '670b9562-b30d-52d5-b827-655787665500'
                   token:
@@ -200,7 +200,7 @@ paths:
               schema:
                 type: object
                 properties:
-                  uuid:
+                  id:
                     type: string
                     example: '670b9562-b30d-52d5-b827-655787665500'
                   token:
@@ -315,7 +315,7 @@ paths:
             schema:
               type: object
               properties:
-                uuid:
+                id:
                   type: string
                   example: '670b9562-b30d-52d5-b827-655787665500'
                 token:
@@ -370,7 +370,7 @@ paths:
                     items:
                       type: object
                       properties:
-                        uuid:
+                        id:
                           type: string
                           example: '670b9562-b30d-52d5-b827-655787665500'
                         first_name:

@@ -1,4 +1,4 @@
-module.exports = function usersController(usersService) {
+module.exports = function usersController(usersService, usersUtils) {
   /**
    * Fetchs all users data from db
    *
@@ -10,10 +10,16 @@ module.exports = function usersController(usersService) {
     try {
       allUsers = await usersService.getAll();
     } catch (err) {
-      res.status(409).json(err);
+      return res.status(409).json(err);
     }
 
-    return res.status(200).json(allUsers);
+    const response = {
+      users: allUsers
+    };
+
+    response.users = response.users.map(usersUtils.buildUsersObject);
+
+    return res.status(200).json(response);
   }
 
   return {
