@@ -1,12 +1,9 @@
-const { OpenApiValidator } = require('express-openapi-validate');
+const OpenApiValidator = require('express-openapi-validator');
 
-module.exports = function $apiValidatorMiddleware(apiSpecs) {
-  const validator = new OpenApiValidator(apiSpecs, {
-    ajvOptions: {
-      allErrors: true,
-      removeAdditional: 'all'
-    }
+module.exports = function $apiValidatorMiddleware(apiSpec) {
+  return OpenApiValidator.middleware({
+    apiSpec,
+    validateRequests: true, // (default)
+    validateResponses: true // false by default
   });
-
-  return validator.match();
 };

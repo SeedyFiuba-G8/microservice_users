@@ -1,31 +1,53 @@
-module.exports = function usersController(usersService, usersUtils, logger) {
+module.exports = function usersController(usersService) {
+  return {
+    getAll,
+    login,
+    register
+  };
+
   /**
-   * Fetchs all users data from db
    *
    * @returns {Promise}
    */
   async function getAll(req, res, next) {
-    let allUsers;
-
+    let users;
     try {
-      allUsers = await usersService.getAll();
+      users = await usersService.getAll();
     } catch (err) {
-      logger.warn('usersService.getAll:', err);
-      err.status = 409;
-      err.name = 'Error in usersService.getAll';
       return next(err);
     }
 
-    const response = {
-      users: allUsers
-    };
-
-    response.users = response.users.map(usersUtils.buildUsersObject);
-
-    return res.status(200).json(response);
+    return res.status(200).json({ users });
   }
 
-  return {
-    getAll
-  };
+  /**
+   * @returns {Promise}
+   */
+  async function login(req, res, next) {
+    const credentials = req.body;
+    let uuid;
+
+    try {
+      uuid = await usersService.login(credentials);
+    } catch (err) {
+      return next(err);
+    }
+
+    return res.status(200).json({ uuid });
+  }
+
+  /**
+   * @returns {Promise}
+   */
+  async function register(req, res, next) {
+    const userData = req.body;
+
+    try {
+      await usersService.register(userData);
+    } catch (err) {
+      return next(err);
+    }
+
+    return res.status(201).send();
+  }
 };

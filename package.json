@@ -31,10 +31,12 @@
     "dependable": "^1.1.0",
     "express": "^4.17.1",
     "express-openapi-validate": "^0.6.1",
+    "express-openapi-validator": "^4.12.11",
     "knex": "^0.95.6",
     "lodash": "^4.17.21",
     "pg": "^8.6.0",
     "swagger-ui-express": "^4.1.6",
+    "uuid": "^8.3.2",
     "winston": "^3.3.3",
     "yamljs": "^0.3.0"
   },

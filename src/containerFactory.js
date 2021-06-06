@@ -16,7 +16,7 @@ function createContainer() {
   ];
 
   // eslint-disable-next-line prefer-arrow-callback
-  container.register('apiSpecs', function $apiSpecs() {
+  container.register('apiSpec', function $apiSpec() {
     return YAML.load(path.join(__dirname, '../assets/api.yml'));
   });
 
