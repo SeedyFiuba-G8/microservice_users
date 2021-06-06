@@ -44,6 +44,10 @@ paths:
           $ref: '#/components/responses/400'
         409:
           $ref: '#/components/responses/409'
+        415:
+          $ref: '#/components/responses/415'
+        500:
+          $ref: '#/components/responses/500'
 
   /user/session:
     post:
@@ -60,6 +64,10 @@ paths:
           $ref: '#/components/responses/400'
         409:
           $ref: '#/components/responses/409'
+        415:
+          $ref: '#/components/responses/415'
+        500:
+          $ref: '#/components/responses/500'
 
   # ADMINS
 
@@ -71,6 +79,10 @@ paths:
       responses:
         200:
           $ref: '#/components/responses/ping'
+        400:
+          $ref: '#/components/responses/400'
+        415:
+          $ref: '#/components/responses/415'
 
   /health:
     get:
@@ -79,6 +91,10 @@ paths:
       responses:
         200:
           $ref: '#/components/responses/ping'
+        400:
+          $ref: '#/components/responses/400'
+        415:
+          $ref: '#/components/responses/415'
 
 # =============================================================================
 
@@ -102,6 +118,20 @@ components:
 
     409:
       description: Conflict.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    415:
+      description: Unsupported Media Type.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    500:
+      description: Internal Server Error.
       content:
         application/json:
           schema:
@@ -153,19 +183,22 @@ components:
     Error:
       type: object
       properties:
-        status:
-          type: integer
-        name:
-          type: string
-        message:
-          type: string
-        errors:
+        error:
           type: object
-        data:
-          type: object
-      required:
-        - status
-        - name
+          properties:
+            status:
+              type: integer
+            name:
+              type: string
+            message:
+              type: string
+            errors:
+              type: object
+            data:
+              type: object
+          required:
+            - status
+            - name
 
     # USERS
     UserLoginData:
@@ -208,12 +241,8 @@ components:
         uuid:
           type: string
           example: 123e4567-e89b-12d3-a456-426614174000
-        token:
-          type: string
-          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
       required:
         - uuid
-        - token
 
     # STATUS
     Ping:
