@@ -129,7 +129,7 @@ paths:
         - Status
       responses:
         200:
-          $ref: '#/components/responses/ping'
+          $ref: '#/components/responses/health'
         400:
           $ref: '#/components/responses/400'
         415:

@@ -1,6 +1,7 @@
 const dependable = require('dependable');
 const path = require('path');
 const apiComponents = require('@seedyfiuba/api_components');
+const dbComponents = require('@seedyfiuba/db_components');
 const errorComponents = require('@seedyfiuba/error_components');
 const loggingComponents = require('@seedyfiuba/logging_components');
 
@@ -33,6 +34,10 @@ function createContainer() {
     return require('config');
   });
 
+  container.register('dbService', function $dbService(knex, logger) {
+    return dbComponents.dbService(knex, logger);
+  });
+
   container.register('docsRouter', function $docsRouter() {
     return apiComponents.docsRouter(apiPath);
   });
@@ -49,8 +54,7 @@ function createContainer() {
   );
 
   container.register('knex', function $knex(config) {
-    // eslint-disable-next-line global-require
-    return require('knex')(config.knex);
+    return dbComponents.knex(config.knex);
   });
 
   container.register('logger', function $logger(config) {
