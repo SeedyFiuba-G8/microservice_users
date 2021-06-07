@@ -1,6 +1,9 @@
 const _ = require('lodash');
 
 module.exports = {
+  bcrypt: {
+    saltRounds: 10
+  },
   express: {
     host: '0.0.0.0',
     port: _.get(process.env, 'PORT', 3000)
