@@ -247,6 +247,8 @@ components:
           required:
             - status
             - name
+      required:
+        - error
 
     # USERS
     UserRegisterData:
