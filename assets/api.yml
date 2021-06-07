@@ -56,10 +56,10 @@ paths:
       tags:
         - Users
       requestBody:
-        $ref: '#/components/requestBodies/postUserSession'
+        $ref: '#/components/requestBodies/postSession'
       responses:
         200:
-          $ref: '#/components/responses/postUserSession'
+          $ref: '#/components/responses/postSession'
         400:
           $ref: '#/components/responses/400'
         409:
@@ -137,13 +137,13 @@ components:
           schema:
             $ref: '#/components/schemas/Error'
 
-    # USERS
-    postUserSession:
-      description: User logged in successfully.
+    # COMMON
+    postSession:
+      description: Logged in successfully.
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/UserSession'
+            $ref: '#/components/schemas/Session'
 
     # STATUS
     health:
@@ -170,12 +170,13 @@ components:
           schema:
             $ref: '#/components/schemas/UserRegisterData'
 
-    postUserSession:
+    # COMMON
+    postSession:
       required: true
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/UserLoginData'
+            $ref: '#/components/schemas/LoginData'
 
   # ---------------------------------------------------------------------------
   schemas:
@@ -201,19 +202,6 @@ components:
             - name
 
     # USERS
-    UserLoginData:
-      type: object
-      properties:
-        email:
-          type: string
-          example: 'memis_pomofot@gmail.com'
-        password:
-          type: string
-          example: 'SomePassword123'
-      required:
-        - email
-        - password
-
     UserRegisterData:
       type: object
       properties:
@@ -235,14 +223,28 @@ components:
         - lastName
         - password
 
-    UserSession:
+    # COMMON
+    LoginData:
       type: object
       properties:
-        uuid:
+        email:
+          type: string
+          example: 'memis_pomofot@gmail.com'
+        password:
+          type: string
+          example: 'SomePassword123'
+      required:
+        - email
+        - password
+
+    Session:
+      type: object
+      properties:
+        id:
           type: string
           example: 123e4567-e89b-12d3-a456-426614174000
       required:
-        - uuid
+        - id
 
     # STATUS
     Ping:

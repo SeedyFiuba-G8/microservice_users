@@ -25,15 +25,15 @@ module.exports = function usersController(usersService) {
    */
   async function login(req, res, next) {
     const credentials = req.body;
-    let uuid;
+    let id;
 
     try {
-      uuid = await usersService.login(credentials);
+      id = await usersService.login(credentials);
     } catch (err) {
       return next(err);
     }
 
-    return res.status(200).json({ uuid });
+    return res.status(200).json({ id });
   }
 
   /**
