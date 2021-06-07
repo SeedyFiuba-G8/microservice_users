@@ -1,6 +1,6 @@
 const { v4: uuidv4 } = require('uuid');
 
-module.exports = function usersService(usersRepository) {
+module.exports = function usersService(adminsRepository) {
   return {
     getAll,
     login,
@@ -12,7 +12,7 @@ module.exports = function usersService(usersRepository) {
    * @returns {Promise}
    */
   async function getAll() {
-    return usersRepository.getAll();
+    return adminsRepository.getAll();
   }
 
   /**
@@ -21,16 +21,16 @@ module.exports = function usersService(usersRepository) {
   function login({ email, password }) {
     // TODO: Validar campos
 
-    return usersRepository.login(email, password);
+    return adminsRepository.login(email, password);
   }
 
   /**
    * @returns {undefined}
    */
-  async function register(userData) {
+  async function register(adminData) {
     // TODO: Validar campos
 
     const uuid = uuidv4();
-    await usersRepository.createUser({ id: uuid, ...userData });
+    await adminsRepository.createAdmin({ id: uuid, ...adminData });
   }
 };

@@ -1,7 +1,7 @@
 -- Add user example
 
-INSERT INTO public.users(
-	id, email, password, first_name, last_name, profile_pic_url)
+INSERT INTO public.users
+	(id, email, password, first_name, last_name, profile_pic_url)
 	VALUES
 	(
 		'123e4567-e89b-12d3-a456-426614174000',

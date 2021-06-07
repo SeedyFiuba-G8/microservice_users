@@ -1,6 +1,6 @@
 module.exports = function usersRepository(errors, logger, knex) {
   return {
-    createUser,
+    createAdmin,
     getAll,
     login
   };
@@ -8,12 +8,10 @@ module.exports = function usersRepository(errors, logger, knex) {
   /**
    * @returns {undefined}
    */
-  async function createUser({ id, firstName, lastName, email, password }) {
+  async function createAdmin({ id, email, password }) {
     try {
-      await knex('users').insert({
+      await knex('admins').insert({
         id,
-        first_name: firstName,
-        last_name: lastName,
         email,
         password
       });
@@ -29,14 +27,14 @@ module.exports = function usersRepository(errors, logger, knex) {
    * @returns {Promise}
    */
   function getAll() {
-    return knex('users');
+    return knex('admins');
   }
 
   /**
    * @returns {String}
    */
   async function login(email, password) {
-    const emailRows = await knex('users').where({ email }).select('*');
+    const emailRows = await knex('admins').where({ email }).select('*');
     if (!emailRows.length) throw errors.Conflict('Email not registered');
 
     const userData = emailRows[0];

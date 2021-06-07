@@ -70,6 +70,45 @@ paths:
           $ref: '#/components/responses/500'
 
   # ADMINS
+  /admin:
+    post:
+      summary: Register a new admin
+      description: Allows admins to create a new basic account by email.
+      tags:
+        - Admins
+      requestBody:
+        $ref: '#/components/requestBodies/postAdmin'
+      responses:
+        201:
+          description: 'Admin was registered successfully.'
+        400:
+          $ref: '#/components/responses/400'
+        409:
+          $ref: '#/components/responses/409'
+        415:
+          $ref: '#/components/responses/415'
+        500:
+          $ref: '#/components/responses/500'
+
+  /admin/session:
+    post:
+      summary: Log in an admin session
+      description: Allows admins to log in to their account in a new session.
+      tags:
+        - Admins
+      requestBody:
+        $ref: '#/components/requestBodies/postSession'
+      responses:
+        200:
+          $ref: '#/components/responses/postSession'
+        400:
+          $ref: '#/components/responses/400'
+        409:
+          $ref: '#/components/responses/409'
+        415:
+          $ref: '#/components/responses/415'
+        500:
+          $ref: '#/components/responses/500'
 
   # STATUS
   /ping:
@@ -170,6 +209,14 @@ components:
           schema:
             $ref: '#/components/schemas/UserRegisterData'
 
+    # ADMINS
+    postAdmin:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AdminRegisterData'
+
     # COMMON
     postSession:
       required: true
@@ -208,19 +255,33 @@ components:
         email:
           type: string
           example: 'memis_pomofot@gmail.com'
+        password:
+          type: string
+          example: 'SomePassword123'
         firstName:
           type: string
           example: 'Memis'
         lastName:
           type: string
           example: 'Pomofot'
+      required:
+        - email
+        - password
+        - firstName
+        - lastName
+
+    # ADMINS
+    AdminRegisterData:
+      type: object
+      properties:
+        email:
+          type: string
+          example: 'memis_pomofot@gmail.com'
         password:
           type: string
           example: 'SomePassword123'
       required:
         - email
-        - firstName
-        - lastName
         - password
 
     # COMMON
