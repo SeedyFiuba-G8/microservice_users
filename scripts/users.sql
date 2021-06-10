@@ -6,7 +6,7 @@ CREATE TABLE public.users (
 	-- Name				Type
 	id					VARCHAR(36)					NOT NULL	PRIMARY KEY,
 	email				VARCHAR(40)					NOT NULL,
-	password			VARCHAR(20)					NOT NULL,
+	password			VARCHAR(60)					NOT NULL,
 	first_name			VARCHAR(20)					NOT NULL,
 	last_name			VARCHAR(20)					NOT NULL,
 	profile_pic_url		VARCHAR(255),
