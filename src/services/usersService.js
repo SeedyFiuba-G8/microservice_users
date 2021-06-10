@@ -1,8 +1,14 @@
 const { v4: uuidv4 } = require('uuid');
 
-module.exports = function usersService(bcrypt, errors, usersRepository) {
+module.exports = function usersService(
+  bcrypt,
+  errors,
+  fbGateway,
+  usersRepository
+) {
   return {
     getAll,
+    fbLogin,
     login,
     register
   };
@@ -13,6 +19,30 @@ module.exports = function usersService(bcrypt, errors, usersRepository) {
    */
   async function getAll() {
     return usersRepository.getAll();
+  }
+
+  /**
+   * @returns {Promise<String>}
+   */
+  async function fbLogin({ fbToken }) {
+    const fbUser = await fbGateway.fetchUser(fbToken);
+    const users = await usersRepository.getByFbId(fbUser.id);
+
+    if (!users.length) {
+      const uuid = uuidv4();
+      await usersRepository.fbCreate({
+        id: uuid,
+        email: fbUser.email,
+        fbId: fbUser.id,
+        firstName: fbUser.first_name,
+        lastName: fbUser.last_name
+      });
+
+      return uuid;
+    }
+
+    const user = users[0];
+    return user.id;
   }
 
   /**
