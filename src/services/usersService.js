@@ -21,8 +21,9 @@ module.exports = function usersService(bcrypt, errors, usersRepository) {
   async function login({ email, password }) {
     // TODO: Validar campos
 
-    const user = usersRepository.get(email)[0];
-    if (!user) throw errors.Conflict('Email not registered');
+    const users = await usersRepository.get(email);
+    if (!users.length) throw errors.Conflict('Email not registered');
+    const user = users[0];
 
     const match = await bcrypt.compare(password, user.password);
     if (!match) throw errors.Conflict('Invalid password');
