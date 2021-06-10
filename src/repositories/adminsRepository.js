@@ -1,14 +1,14 @@
 module.exports = function usersRepository(errors, logger, knex) {
   return {
-    createAdmin,
-    getAll,
-    login
+    create,
+    get,
+    getAll
   };
 
   /**
    * @returns {undefined}
    */
-  async function createAdmin({ id, email, password }) {
+  async function create({ id, email, password }) {
     try {
       await knex('admins').insert({
         id,
@@ -24,23 +24,16 @@ module.exports = function usersRepository(errors, logger, knex) {
   }
 
   /**
+   * @returns {String}
+   */
+  function get(email) {
+    return knex('admins').where({ email }).select('*');
+  }
+
+  /**
    * @returns {Promise}
    */
   function getAll() {
     return knex('admins');
-  }
-
-  /**
-   * @returns {String}
-   */
-  async function login(email, password) {
-    const emailRows = await knex('admins').where({ email }).select('*');
-    if (!emailRows.length) throw errors.Conflict('Email not registered');
-
-    const userData = emailRows[0];
-    if (password !== userData.password)
-      throw errors.Conflict('Invalid password');
-
-    return userData.id;
   }
 };
