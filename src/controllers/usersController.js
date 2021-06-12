@@ -28,7 +28,11 @@ module.exports = function usersController(usersService) {
     let id;
 
     try {
-      id = await usersService.login(credentials);
+      if (!credentials.fbToken) {
+        id = await usersService.login(credentials);
+      } else {
+        id = await usersService.fbLogin(credentials);
+      }
     } catch (err) {
       return next(err);
     }
