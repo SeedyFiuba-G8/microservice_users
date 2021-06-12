@@ -10,6 +10,7 @@ function createContainer() {
   const entries = [
     'app.js',
     'controllers',
+    'gateways',
     'middlewares',
     'repositories',
     'routes',
