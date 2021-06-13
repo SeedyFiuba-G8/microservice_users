@@ -20,5 +20,5 @@ CREATE TABLE public.users (
 	UNIQUE(email),
 
 	-- Constraints
-	CONSTRAINT chk_credentials CHECK ((password IS NOT NULL and fb_id IS NULL) or (password IS NOT NULL and fb_id IS NULL))
+	CONSTRAINT chk_credentials CHECK ((password IS NOT NULL and fb_id IS NULL) or (password IS NULL and fb_id IS NOT NULL))
 );
