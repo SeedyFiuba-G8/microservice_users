@@ -31,7 +31,7 @@ module.exports = function usersService(
 
     if (!users.length) {
       const uuid = uuidv4();
-      await usersRepository.fbCreate({
+      await usersRepository.create({
         id: uuid,
         email: fbUser.email,
         fbId: fbUser.id,

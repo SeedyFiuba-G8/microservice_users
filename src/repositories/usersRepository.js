@@ -1,44 +1,27 @@
 module.exports = function usersRepository(errors, logger, knex) {
   return {
     create,
-    fbCreate,
     get,
     getAll,
     getByFbId
   };
 
   /**
-   * @returns {undefined}
+   * @returns {Promise<undefined>}
    */
-  async function create({ id, firstName, lastName, email, password }) {
-    try {
-      await knex('users').insert({
-        id,
-        email,
-        password,
-        first_name: firstName,
-        last_name: lastName
-      });
-    } catch (err) {
-      if (err.code === '23505') throw errors.Conflict('Email already in use');
+  async function create({ id, email, password, fbId, firstName, lastName }) {
+    const userData = {
+      id,
+      email,
+      first_name: firstName,
+      last_name: lastName
+    };
 
-      logger.error(err);
-      throw errors.InternalServerError();
-    }
-  }
+    if (password) userData.password = password;
+    if (fbId) userData.fb_id = fbId;
 
-  /**
-   * @returns {undefined}
-   */
-  async function fbCreate({ id, email, fbId, firstName, lastName }) {
     try {
-      await knex('users').insert({
-        id,
-        email,
-        fb_id: fbId,
-        first_name: firstName,
-        last_name: lastName
-      });
+      await knex('users').insert(userData);
     } catch (err) {
       if (err.code === '23505') throw errors.Conflict('Email already in use');
 
