@@ -4,6 +4,26 @@ module.exports = {
   bcrypt: {
     saltRounds: 10
   },
+  constraints: {
+    fields: {
+      email: {
+        min: 4,
+        max: 40
+      },
+      password: {
+        min: 4,
+        max: 20
+      },
+      firstName: {
+        min: 1,
+        max: 20
+      },
+      lastName: {
+        min: 1,
+        max: 20
+      }
+    }
+  },
   express: {
     host: '0.0.0.0',
     port: _.get(process.env, 'PORT', 3000)

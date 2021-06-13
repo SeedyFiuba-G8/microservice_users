@@ -4,7 +4,8 @@ module.exports = function usersService(
   bcrypt,
   errors,
   fbGateway,
-  usersRepository
+  usersRepository,
+  validationUtils
 ) {
   return {
     getAll,
@@ -49,7 +50,7 @@ module.exports = function usersService(
    * @returns {Promise<String>}
    */
   async function login({ email, password }) {
-    // TODO: Validar campos
+    validationUtils.validateLoginData({ email, password });
 
     const users = await usersRepository.get(email);
     if (!users.length) throw errors.Conflict('Email not registered');
@@ -65,7 +66,7 @@ module.exports = function usersService(
    * @returns {undefined}
    */
   async function register(userData) {
-    // TODO: Validar campos
+    validationUtils.validateUserRegisterData(userData);
 
     const uuid = uuidv4();
     const encryptedPassword = await bcrypt.hash(userData.password);

@@ -1,4 +1,8 @@
-module.exports = function usersUtils() {
+module.exports = function $usersUtils() {
+  return {
+    buildUsersObject
+  };
+
   function buildUsersObject(userInfo) {
     return {
       id: userInfo.id,
@@ -6,8 +10,4 @@ module.exports = function usersUtils() {
       last_name: userInfo.last_name
     };
   }
-
-  return {
-    buildUsersObject
-  };
 };
