@@ -56,6 +56,8 @@ module.exports = function usersService(
     if (!users.length) throw errors.Conflict('Email not registered');
     const user = users[0];
 
+    if (user.banned) throw errors.Conflict('User is banned');
+
     const match = await bcrypt.compare(password, user.password);
     if (!match) throw errors.Conflict('Invalid password');
 
