@@ -1,4 +1,4 @@
-module.exports = function usersController(usersService) {
+module.exports = function $userController(userService) {
   return {
     getAll,
     login,
@@ -12,7 +12,7 @@ module.exports = function usersController(usersService) {
   async function getAll(req, res, next) {
     let users;
     try {
-      users = await usersService.getAll();
+      users = await userService.getAll();
     } catch (err) {
       return next(err);
     }
@@ -29,9 +29,9 @@ module.exports = function usersController(usersService) {
 
     try {
       if (!credentials.fbToken) {
-        id = await usersService.login(credentials);
+        id = await userService.login(credentials);
       } else {
-        id = await usersService.fbLogin(credentials);
+        id = await userService.fbLogin(credentials);
       }
     } catch (err) {
       return next(err);
@@ -47,7 +47,7 @@ module.exports = function usersController(usersService) {
     const userData = req.body;
 
     try {
-      await usersService.register(userData);
+      await userService.register(userData);
     } catch (err) {
       return next(err);
     }

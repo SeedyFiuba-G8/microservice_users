@@ -2,9 +2,9 @@ const express = require('express');
 
 module.exports = function apiRouter(
   apiValidatorMiddleware,
-  adminsController,
+  adminController,
   statusController,
-  usersController
+  userController
 ) {
   return (
     express
@@ -13,8 +13,8 @@ module.exports = function apiRouter(
       .get('/', (req, res) => res.redirect('/api-docs'))
 
       // SPY ROUTES (debug only)
-      .get('/user', usersController.getAll)
-      .get('/admin', adminsController.getAll)
+      .get('/user', userController.getAll)
+      .get('/admin', adminController.getAll)
 
       // OpenAPI Validation Middleware
       .use(apiValidatorMiddleware)
@@ -26,11 +26,11 @@ module.exports = function apiRouter(
       // ROUTES
 
       // Users
-      .post('/user', usersController.register)
-      .post('/user/session', usersController.login)
+      .post('/user', userController.register)
+      .post('/user/session', userController.login)
 
       // Admins
-      .post('/admin', adminsController.register)
-      .post('/admin/session', adminsController.login)
+      .post('/admin', adminController.register)
+      .post('/admin/session', adminController.login)
   );
 };

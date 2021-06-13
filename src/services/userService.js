@@ -1,10 +1,10 @@
 const { v4: uuidv4 } = require('uuid');
 
-module.exports = function usersService(
+module.exports = function $userService(
   bcrypt,
   errors,
   fbGateway,
-  usersRepository,
+  userRepository,
   validationUtils
 ) {
   return {
@@ -19,7 +19,7 @@ module.exports = function usersService(
    * @returns {Promise}
    */
   async function getAll() {
-    return usersRepository.getAll();
+    return userRepository.getAll();
   }
 
   /**
@@ -27,11 +27,11 @@ module.exports = function usersService(
    */
   async function fbLogin({ fbToken }) {
     const fbUser = await fbGateway.fetchUser(fbToken);
-    const users = await usersRepository.getByFbId(fbUser.id);
+    const users = await userRepository.getByFbId(fbUser.id);
 
     if (!users.length) {
       const uuid = uuidv4();
-      await usersRepository.create({
+      await userRepository.create({
         id: uuid,
         email: fbUser.email,
         fbId: fbUser.id,
@@ -52,7 +52,7 @@ module.exports = function usersService(
   async function login({ email, password }) {
     validationUtils.validateLoginData({ email, password });
 
-    const users = await usersRepository.get(email);
+    const users = await userRepository.get(email);
     if (!users.length) throw errors.Conflict('Email not registered');
     const user = users[0];
 
@@ -73,7 +73,7 @@ module.exports = function usersService(
     const uuid = uuidv4();
     const encryptedPassword = await bcrypt.hash(userData.password);
 
-    await usersRepository.create({
+    await userRepository.create({
       ...userData,
       id: uuid,
       password: encryptedPassword
