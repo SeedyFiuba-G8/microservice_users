@@ -9,13 +9,8 @@ module.exports = function usersController(usersService) {
    *
    * @returns {Promise}
    */
-  async function getAll(req, res, next) {
-    let users;
-    try {
-      users = await usersService.getAll();
-    } catch (err) {
-      return next(err);
-    }
+  async function getAll(req, res) {
+    const users = await usersService.getAll();
 
     return res.status(200).json({ users });
   }
@@ -23,18 +18,14 @@ module.exports = function usersController(usersService) {
   /**
    * @returns {Promise}
    */
-  async function login(req, res, next) {
+  async function login(req, res) {
     const credentials = req.body;
     let id;
 
-    try {
-      if (!credentials.fbToken) {
-        id = await usersService.login(credentials);
-      } else {
-        id = await usersService.fbLogin(credentials);
-      }
-    } catch (err) {
-      return next(err);
+    if (!credentials.fbToken) {
+      id = await usersService.login(credentials);
+    } else {
+      id = await usersService.fbLogin(credentials);
     }
 
     return res.status(200).json({ id });
@@ -43,14 +34,9 @@ module.exports = function usersController(usersService) {
   /**
    * @returns {Promise}
    */
-  async function register(req, res, next) {
+  async function register(req, res) {
     const userData = req.body;
-
-    try {
-      await usersService.register(userData);
-    } catch (err) {
-      return next(err);
-    }
+    await usersService.register(userData);
 
     return res.status(201).send();
   }
