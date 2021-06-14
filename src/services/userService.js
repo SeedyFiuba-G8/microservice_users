@@ -55,13 +55,14 @@ module.exports = function $userService(
     validationUtils.validateLoginData({ email, password });
 
     const users = await userRepository.get(email);
-    if (!users.length) throw errors.Conflict('Email not registered');
+    if (!users.length)
+      throw errors.Conflict('Invalid email/password combination');
     const user = users[0];
 
-    if (user.banned) throw errors.Conflict('User is banned');
-
     const match = await bcrypt.compare(password, user.password);
-    if (!match) throw errors.Conflict('Invalid password');
+    if (!match) throw errors.Conflict('Invalid email/password combination');
+
+    if (user.banned) throw errors.Conflict('User is banned');
 
     return user.id;
   }
