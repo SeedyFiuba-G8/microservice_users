@@ -30,6 +30,19 @@ tags:
 paths:
   # USERS
   /user:
+    get:
+      summary: Get all users
+      description: Get info from every user.
+      tags:
+        - Users
+      responses:
+        200:
+          $ref: '#/components/responses/getAllUsers'
+        409:
+          $ref: '#/components/responses/409'
+        500:
+          $ref: '#/components/responses/500'
+
     post:
       summary: Register a new user
       description: Allows users to create a new basic account by email.
@@ -148,6 +161,20 @@ components:
           schema:
             $ref: '#/components/schemas/Error'
 
+    401:
+      description: Unauthorized.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    403:
+      description: Forbidden.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
     404:
       description: Not found.
       content:
@@ -175,6 +202,14 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
+
+    # USERS
+    getAllUsers:
+      description: Users info retrieved successfully.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AllUsers'
 
     # COMMON
     postSession:
@@ -253,6 +288,45 @@ components:
         - error
 
     # USERS
+    AllUsers:
+      type: object
+      properties:
+        users:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+      required:
+        - users
+
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 'SomePassword123'
+        email:
+          type: string
+          example: 'memis_pomofot@gmail.com'
+        banned:
+          type: boolean
+          example: false
+        firstName:
+          type: string
+          example: 'Memis'
+        lastName:
+          type: string
+          example: 'Pomofot'
+        signupDate:
+          type: string
+          example: '2021-06-13T21:29:29.340Z'
+      required:
+        - id
+        - email
+        - banned
+        - firstName
+        - lastName
+        - signupDate
+
     UserRegisterData:
       type: object
       properties:

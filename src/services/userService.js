@@ -5,6 +5,7 @@ module.exports = function $userService(
   errors,
   fbGateway,
   userRepository,
+  userUtils,
   validationUtils
 ) {
   return {
@@ -19,7 +20,8 @@ module.exports = function $userService(
    * @returns {Promise}
    */
   async function getAll() {
-    return userRepository.getAll();
+    const users = await userRepository.getAll();
+    return users.map(userUtils.buildAllUsersObject);
   }
 
   /**

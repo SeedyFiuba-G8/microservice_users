@@ -13,8 +13,8 @@ module.exports = function apiRouter(
       .get('/', (req, res) => res.redirect('/api-docs'))
 
       // SPY ROUTES (debug only)
-      .get('/user', userController.getAll)
-      .get('/admin', adminController.getAll)
+      .get('/spyUser', userController.getAll)
+      .get('/spyAdmin', adminController.getAll)
 
       // OpenAPI Validation Middleware
       .use(apiValidatorMiddleware)
@@ -26,6 +26,7 @@ module.exports = function apiRouter(
       // ROUTES
 
       // Users
+      .get('/user', userController.getAll)
       .post('/user', userController.register)
       .post('/user/session', userController.login)
 
