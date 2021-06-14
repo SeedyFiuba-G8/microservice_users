@@ -1,4 +1,4 @@
-module.exports = function usersRepository(errors, logger, knex) {
+module.exports = function $adminRepository(errors, logger, knex) {
   return {
     create,
     get,

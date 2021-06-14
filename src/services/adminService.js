@@ -1,6 +1,11 @@
 const { v4: uuidv4 } = require('uuid');
 
-module.exports = function usersService(bcrypt, errors, adminsRepository) {
+module.exports = function $adminService(
+  bcrypt,
+  errors,
+  adminRepository,
+  validationUtils
+) {
   return {
     getAll,
     login,
@@ -12,16 +17,16 @@ module.exports = function usersService(bcrypt, errors, adminsRepository) {
    * @returns {Promise}
    */
   async function getAll() {
-    return adminsRepository.getAll();
+    return adminRepository.getAll();
   }
 
   /**
    * @returns {Promise<String>}
    */
   async function login({ email, password }) {
-    // TODO: Validar campos
+    validationUtils.validateLoginData({ email, password });
 
-    const admins = await adminsRepository.get(email);
+    const admins = await adminRepository.get(email);
     if (!admins.length) throw errors.Conflict('Email not registered');
     const admin = admins[0];
 
@@ -35,12 +40,12 @@ module.exports = function usersService(bcrypt, errors, adminsRepository) {
    * @returns {undefined}
    */
   async function register(adminData) {
-    // TODO: Validar campos
+    validationUtils.validateAdminRegisterData(adminData);
 
     const uuid = uuidv4();
     const encryptedPassword = await bcrypt.hash(adminData.password);
 
-    await adminsRepository.create({
+    await adminRepository.create({
       ...adminData,
       id: uuid,
       password: encryptedPassword

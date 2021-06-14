@@ -1,4 +1,4 @@
-module.exports = function usersController(adminsService) {
+module.exports = function $adminController(adminService) {
   return {
     getAll,
     login,
@@ -6,13 +6,12 @@ module.exports = function usersController(adminsService) {
   };
 
   /**
-   *
    * @returns {Promise}
    */
   async function getAll(req, res, next) {
     let admins;
     try {
-      admins = await adminsService.getAll();
+      admins = await adminService.getAll();
     } catch (err) {
       return next(err);
     }
@@ -28,7 +27,7 @@ module.exports = function usersController(adminsService) {
     let id;
 
     try {
-      id = await adminsService.login(credentials);
+      id = await adminService.login(credentials);
     } catch (err) {
       return next(err);
     }
@@ -43,7 +42,7 @@ module.exports = function usersController(adminsService) {
     const adminData = req.body;
 
     try {
-      await adminsService.register(adminData);
+      await adminService.register(adminData);
     } catch (err) {
       return next(err);
     }

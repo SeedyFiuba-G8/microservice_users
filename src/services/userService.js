@@ -1,10 +1,11 @@
 const { v4: uuidv4 } = require('uuid');
 
-module.exports = function usersService(
+module.exports = function $userService(
   bcrypt,
   errors,
   fbGateway,
-  usersRepository
+  userRepository,
+  validationUtils
 ) {
   return {
     getAll,
@@ -18,7 +19,7 @@ module.exports = function usersService(
    * @returns {Promise}
    */
   async function getAll() {
-    return usersRepository.getAll();
+    return userRepository.getAll();
   }
 
   /**
@@ -26,11 +27,11 @@ module.exports = function usersService(
    */
   async function fbLogin({ fbToken }) {
     const fbUser = await fbGateway.fetchUser(fbToken);
-    const users = await usersRepository.getByFbId(fbUser.id);
+    const users = await userRepository.getByFbId(fbUser.id);
 
     if (!users.length) {
       const uuid = uuidv4();
-      await usersRepository.fbCreate({
+      await userRepository.create({
         id: uuid,
         email: fbUser.email,
         fbId: fbUser.id,
@@ -49,11 +50,13 @@ module.exports = function usersService(
    * @returns {Promise<String>}
    */
   async function login({ email, password }) {
-    // TODO: Validar campos
+    validationUtils.validateLoginData({ email, password });
 
-    const users = await usersRepository.get(email);
+    const users = await userRepository.get(email);
     if (!users.length) throw errors.Conflict('Email not registered');
     const user = users[0];
+
+    if (user.banned) throw errors.Conflict('User is banned');
 
     const match = await bcrypt.compare(password, user.password);
     if (!match) throw errors.Conflict('Invalid password');
@@ -65,12 +68,12 @@ module.exports = function usersService(
    * @returns {undefined}
    */
   async function register(userData) {
-    // TODO: Validar campos
+    validationUtils.validateUserRegisterData(userData);
 
     const uuid = uuidv4();
     const encryptedPassword = await bcrypt.hash(userData.password);
 
-    await usersRepository.create({
+    await userRepository.create({
       ...userData,
       id: uuid,
       password: encryptedPassword
