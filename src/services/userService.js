@@ -68,7 +68,7 @@ module.exports = function $userService(
   }
 
   /**
-   * @returns {undefined}
+   * @returns {Promise<undefined>}
    */
   async function register(userData) {
     validationUtils.validateUserRegisterData(userData);
