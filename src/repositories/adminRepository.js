@@ -16,10 +16,11 @@ module.exports = function $adminRepository(errors, logger, knex) {
         password
       });
     } catch (err) {
-      if (err.code === '23505') throw errors.Conflict('Email already in use');
+      if (err.code === '23505')
+        throw errors.create(409, 'Email already in use');
 
       logger.error(err);
-      throw errors.InternalServerError();
+      throw errors.UnknownError;
     }
   }
 

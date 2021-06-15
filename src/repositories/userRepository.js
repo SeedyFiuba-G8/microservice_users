@@ -23,10 +23,11 @@ module.exports = function $userRepository(errors, logger, knex) {
     try {
       await knex('users').insert(userData);
     } catch (err) {
-      if (err.code === '23505') throw errors.Conflict('Email already in use');
+      if (err.code === '23505')
+        throw errors.create(409, 'Email already in use');
 
       logger.error(err);
-      throw errors.InternalServerError();
+      throw errors.UnknownError;
     }
   }
 
