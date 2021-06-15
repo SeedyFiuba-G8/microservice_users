@@ -1,12 +1,9 @@
-module.exports = function $statusController(dbService) {
-  return {
+module.exports = function $statusController(dbService, expressify) {
+  return expressify({
     health,
     ping
-  };
+  });
 
-  /**
-   * @returns {Promise}
-   */
   async function health(req, res) {
     const dbStatus = await dbService.getDatabaseHealth();
 
@@ -17,9 +14,6 @@ module.exports = function $statusController(dbService) {
     return res.status(200).json(response);
   }
 
-  /**
-   * @returns {Promise}
-   */
   function ping(req, res) {
     const response = {
       status: 'ok'

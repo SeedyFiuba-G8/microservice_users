@@ -47,6 +47,11 @@ function createContainer() {
     return errorComponents.errors();
   });
 
+  container.register('expressify', function $expressify() {
+    // eslint-disable-next-line global-require
+    return require('expressify')();
+  });
+
   container.register(
     'errorHandlerMiddleware',
     function $errorHandlerMiddleware() {
