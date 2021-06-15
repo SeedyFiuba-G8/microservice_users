@@ -56,11 +56,11 @@ module.exports = function $userService(
 
     const users = await userRepository.get(email);
     if (!users.length)
-      throw errors.Conflict('Invalid email/password combination');
+      throw errors.Conflict('Invalid email and password combination');
     const user = users[0];
 
     const match = await bcrypt.compare(password, user.password);
-    if (!match) throw errors.Conflict('Invalid email/password combination');
+    if (!match) throw errors.Conflict('Invalid email and password combination');
 
     if (user.banned) throw errors.Conflict('User is banned');
 
