@@ -6,6 +6,7 @@ const container = containerFactory.createContainer();
 describe('statusController', () => {
   let dbService;
   let request;
+  let res;
 
   beforeEach(() => {
     dbService = container.get('dbService');
@@ -13,32 +14,52 @@ describe('statusController', () => {
   });
 
   describe('GET /ping', () => {
-    it('should respond with correct status and body', async () => {
-      const res = await request.get('/ping').send();
-
-      expect(res.status).toEqual(200);
-      expect(res.body).toEqual({ status: 'ok' });
-    });
+    it('should respond with correct status and body', () =>
+      request
+        .get('/ping')
+        .expect('Content-Type', /json/)
+        .expect(200, { status: 'ok' }));
   });
 
   describe('GET /health', () => {
-    let spyDbService;
-    let res;
+    const spyDbService = {};
 
-    beforeEach(async () => {
-      spyDbService = jest
-        .spyOn(dbService, 'getDatabaseHealth')
-        .mockReturnValue(true);
-      res = await request.get('/health').send();
+    describe('when database is up', () => {
+      beforeEach(async () => {
+        spyDbService.getDatabaseHealth = jest
+          .spyOn(dbService, 'getDatabaseHealth')
+          .mockReturnValue(true);
+
+        res = await request.get('/health');
+      });
+
+      it('should respond with correct status and body', () => {
+        expect(res.status).toEqual(200);
+        expect(res.header['content-type']).toMatch(/json/);
+        expect(res.body).toEqual({ database: 'UP' });
+      });
+
+      it('should have called dbService once', () =>
+        expect(spyDbService.getDatabaseHealth).toHaveBeenCalledTimes(1));
     });
 
-    it('should respond with correct status and body', () => {
-      expect(res.status).toEqual(200);
-      expect(res.body).toEqual({ database: 'UP' });
-    });
+    describe('when database is down', () => {
+      beforeEach(async () => {
+        spyDbService.getDatabaseHealth = jest
+          .spyOn(dbService, 'getDatabaseHealth')
+          .mockReturnValue(false);
 
-    it('should have called dbService once', () => {
-      expect(spyDbService).toHaveBeenCalledTimes(1);
+        res = await request.get('/health');
+      });
+
+      it('should respond with correct status and body', () => {
+        expect(res.status).toEqual(200);
+        expect(res.header['content-type']).toMatch(/json/);
+        expect(res.body).toEqual({ database: 'DOWN' });
+      });
+
+      it('should have called dbService once', () =>
+        expect(spyDbService.getDatabaseHealth).toHaveBeenCalledTimes(1));
     });
   });
 });
