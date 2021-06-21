@@ -2,9 +2,15 @@ const emailValidator = require('email-validator');
 
 module.exports = function $validationUtils(config, errors) {
   return {
+    // Wrappers
     validateAdminRegisterData,
     validateLoginData,
-    validateUserRegisterData
+    validateUserRegisterData,
+
+    // Validators
+    validateEmail,
+    validateName,
+    validatePassword
   };
 
   function validateAdminRegisterData({ email, password }) {
@@ -40,17 +46,6 @@ module.exports = function $validationUtils(config, errors) {
     }
   }
 
-  function validatePassword(password) {
-    const minLength = config.constraints.fields.password.min;
-    const maxLength = config.constraints.fields.password.max;
-
-    if (!validLength({ field: password, minLength, maxLength }))
-      throw errors.create(
-        409,
-        `Password is invalid: its length must be within ${minLength} and ${maxLength} chars.`
-      );
-  }
-
   function validateName(firstName, lastName) {
     let minLength = config.constraints.fields.firstName.min;
     let maxLength = config.constraints.fields.firstName.max;
@@ -68,6 +63,17 @@ module.exports = function $validationUtils(config, errors) {
       throw errors.create(
         409,
         `Last name is invalid: its length must be within ${minLength} and ${maxLength} chars.`
+      );
+  }
+
+  function validatePassword(password) {
+    const minLength = config.constraints.fields.password.min;
+    const maxLength = config.constraints.fields.password.max;
+
+    if (!validLength({ field: password, minLength, maxLength }))
+      throw errors.create(
+        409,
+        `Password is invalid: its length must be within ${minLength} and ${maxLength} chars.`
       );
   }
 
