@@ -15,11 +15,11 @@ module.exports = {
         max: 20
       },
       firstName: {
-        min: 1,
+        min: 2,
         max: 20
       },
       lastName: {
-        min: 1,
+        min: 2,
         max: 20
       }
     }
