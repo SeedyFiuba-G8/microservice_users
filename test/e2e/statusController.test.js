@@ -13,6 +13,10 @@ describe('statusController', () => {
     request = supertest(container.get('app'));
   });
 
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
   describe('GET /ping', () => {
     it('should respond with correct status and body', () =>
       request
