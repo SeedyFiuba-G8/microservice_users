@@ -3,7 +3,7 @@ const containerFactory = require('../src/containerFactory');
 
 function createContainer() {
   const container = containerFactory.createContainer();
-  const entries = [];
+  const entries = ['support'];
 
   entries.forEach((entry) => container.load(path.join(__dirname, entry)));
 
