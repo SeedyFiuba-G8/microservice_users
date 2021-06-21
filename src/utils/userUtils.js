@@ -10,7 +10,7 @@ module.exports = function $userUtils() {
       banned: user.banned,
       firstName: user.first_name,
       lastName: user.last_name,
-      signupDate: JSON.stringify(user.signup_date)
+      signupDate: user.signup_date.toString()
     };
   }
 };
