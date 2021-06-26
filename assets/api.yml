@@ -278,9 +278,9 @@ components:
             message:
               type: string
             errors:
-              type: object
-            data:
-              type: object
+              type: array
+              items:
+                type: object
           required:
             - status
             - name

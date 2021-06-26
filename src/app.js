@@ -9,8 +9,8 @@ module.exports = function $app(
   const app = express();
 
   // Pre middleware
-  app.use(express.json());
   app.use(loggingMiddleware);
+  app.use(express.json());
 
   // Routers
   app.use(docsRouter);

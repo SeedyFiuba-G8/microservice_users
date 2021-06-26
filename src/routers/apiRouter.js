@@ -12,10 +12,6 @@ module.exports = function apiRouter(
       // Redirect root to api docs
       .get('/', (req, res) => res.redirect('/api-docs'))
 
-      // SPY ROUTES (debug only)
-      .get('/spyUser', userController.getAll)
-      .get('/spyAdmin', adminController.getAll)
-
       // OpenAPI Validation Middleware
       .use(apiValidatorMiddleware)
 
