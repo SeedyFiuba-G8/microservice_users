@@ -9,6 +9,7 @@ describe('userController', () => {
   let mockData;
   let request;
   let res;
+  let userNocks;
   let userRepository;
 
   const spyUserRepository = {};
@@ -16,6 +17,7 @@ describe('userController', () => {
   beforeEach(() => {
     errors = container.get('errors');
     mockData = container.get('mockData');
+    userNocks = container.get('userNocks');
     userRepository = container.get('userRepository');
     request = supertest(container.get('app'));
   });
@@ -223,7 +225,7 @@ describe('userController', () => {
             });
 
             it('should fail with status 409', () =>
-              request.post('/user/session').send(loginData).expect(409));
+              expect(res.status).toEqual(409));
 
             it('should have called userRepository.get correctly', () => {
               expect(spyUserRepository.get).toHaveBeenCalledTimes(1);
@@ -255,13 +257,115 @@ describe('userController', () => {
     });
 
     describe('when logging with facebook token', () => {
+      let fbUserInfo;
+
       beforeEach(() => {
-        loginData = {
-          fbToken: 'UnTokenDeFacebookFalso'
+        fbUserInfo = {
+          email: 'mauris@boke.com',
+          id: '234234234253154',
+          first_name: 'Mauro',
+          last_name: 'ElMasCapo'
         };
+
+        loginData = {
+          fbToken: 'ElTokenDeMaurisElMasCapo'
+        };
+
+        user = {
+          id: 'ca718a21-a126-484f-bc50-145126a6f75b',
+          email: 'mauris@boke.com',
+          firstName: 'Mauro',
+          lastName: 'ElMasCapo',
+          banned: false
+        };
+
+        userNocks.nockFbUserInfo(loginData.fbToken, fbUserInfo);
       });
 
-      it('TO-DO', () => expect(true).toBeTruthy());
+      describe('when user fbId is not registered (register)', () => {
+        beforeEach(async () => {
+          spyUserRepository.getByFbId = jest
+            .spyOn(userRepository, 'getByFbId')
+            .mockReturnValue([]);
+
+          spyUserRepository.create = jest
+            .spyOn(userRepository, 'create')
+            .mockReturnValue(undefined);
+
+          res = await request.post('/user/session').send(loginData);
+        });
+
+        it('should respond with correct status and body', () => {
+          expect(res.status).toEqual(200);
+          expect(res.body).toEqual({
+            id: expect.any(String)
+          });
+        });
+
+        it('should have called userRepository.getByFbId correctly', () => {
+          expect(spyUserRepository.getByFbId).toHaveBeenCalledTimes(1);
+          expect(spyUserRepository.getByFbId).toHaveBeenCalledWith(
+            fbUserInfo.id
+          );
+        });
+
+        it('should have called userRepository.create correctly', () => {
+          expect(spyUserRepository.create).toHaveBeenCalledTimes(1);
+          expect(spyUserRepository.create).toHaveBeenCalledWith({
+            email: fbUserInfo.email,
+            id: expect.any(String),
+            fbId: fbUserInfo.id,
+            firstName: fbUserInfo.first_name,
+            lastName: fbUserInfo.last_name
+          });
+        });
+      });
+
+      describe('when user fbId is already registered (login)', () => {
+        describe('when user is banned', () => {
+          beforeEach(async () => {
+            spyUserRepository.getByFbId = jest
+              .spyOn(userRepository, 'getByFbId')
+              .mockReturnValue([{ ...user, banned: true }]);
+
+            res = await request.post('/user/session').send(loginData);
+          });
+
+          it('should fail with status 409', () =>
+            expect(res.status).toEqual(409));
+
+          it('should have called userRepository.getByFbId correctly', () => {
+            expect(spyUserRepository.getByFbId).toHaveBeenCalledTimes(1);
+            expect(spyUserRepository.getByFbId).toHaveBeenCalledWith(
+              fbUserInfo.id
+            );
+          });
+        });
+
+        describe('when user is not banned', () => {
+          beforeEach(() => {
+            spyUserRepository.getByFbId = jest
+              .spyOn(userRepository, 'getByFbId')
+              .mockReturnValue([user]);
+          });
+
+          it('should respond with correct status and body', () =>
+            request
+              .post('/user/session')
+              .send(loginData)
+              .expect('Content-Type', /json/)
+              .expect(200, { id: user.id }));
+
+          it('should have called userRepository.getByFbId correctly', async () => {
+            await request.post('/user/session').send(loginData);
+
+            expect(spyUserRepository.getByFbId).toHaveBeenCalledTimes(1);
+            expect(spyUserRepository.getByFbId).toHaveBeenCalledWith(
+              fbUserInfo.id
+            );
+          });
+        });
+      });
     });
   });
 });

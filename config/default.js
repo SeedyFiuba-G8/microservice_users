@@ -28,6 +28,12 @@ module.exports = {
     host: '0.0.0.0',
     port: _.get(process.env, 'PORT', 3000)
   },
+  gateways: {
+    fb: {
+      userByTokenBaseUrl:
+        'https://graph.facebook.com/me?fields=email,first_name,last_name&access_token='
+    }
+  },
   knex: {
     client: 'pg',
     connection: {

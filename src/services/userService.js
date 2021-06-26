@@ -45,7 +45,6 @@ module.exports = function $userService(
     }
 
     const user = users[0];
-
     if (user.banned) throw errors.create(409, 'User is banned');
 
     return user.id;
