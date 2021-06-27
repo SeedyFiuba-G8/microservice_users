@@ -25,6 +25,6 @@ module.exports = function $adminRepository(errors, logger, knex) {
   function get(filters = {}) {
     const parsedFilters = _.omitBy({ email: filters.email }, _.isUndefined);
 
-    return knex('users').where(parsedFilters).select('*');
+    return knex('admins').where(parsedFilters).select('*');
   }
 };
