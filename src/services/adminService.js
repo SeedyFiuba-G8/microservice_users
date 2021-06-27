@@ -7,18 +7,9 @@ module.exports = function $adminService(
   validationUtils
 ) {
   return {
-    getAll,
     login,
     register
   };
-
-  /**
-   *
-   * @returns {Promise}
-   */
-  async function getAll() {
-    return adminRepository.getAll();
-  }
 
   /**
    * @returns {Promise<String>}
