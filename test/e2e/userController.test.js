@@ -26,14 +26,14 @@ describe('userController', () => {
     jest.clearAllMocks();
   });
 
-  describe('GET /user', () => {
+  describe('GET /users', () => {
     describe('when there are users', () => {
       beforeEach(async () => {
         spyUserRepository.getAll = jest
           .spyOn(userRepository, 'getAll')
           .mockReturnValue(mockData.users);
 
-        res = await request.get('/user');
+        res = await request.get('/users');
       });
 
       it('should respond with correct status and body', () => {
@@ -52,7 +52,7 @@ describe('userController', () => {
           .spyOn(userRepository, 'getAll')
           .mockReturnValue([]);
 
-        res = await request.get('/user');
+        res = await request.get('/users');
       });
 
       it('should respond with correct status and body', () => {
@@ -66,7 +66,7 @@ describe('userController', () => {
     });
   });
 
-  describe('POST /user', () => {
+  describe('POST /users', () => {
     let registerData;
 
     beforeEach(() => {
@@ -80,13 +80,13 @@ describe('userController', () => {
 
     describe('when no body is provided', () => {
       it('should fail with status 415', () =>
-        request.post('/user').expect(415));
+        request.post('/users').expect(415));
     });
 
     describe('when body is invalid', () => {
       it('should fail with status 400', () =>
         request
-          .post('/user')
+          .post('/users')
           .send({
             faltan: 'cosas'
           })
@@ -102,7 +102,7 @@ describe('userController', () => {
               throw errors.create(409, 'Email already in use');
             });
 
-          res = await request.post('/user').send(registerData);
+          res = await request.post('/users').send(registerData);
         });
 
         it('should fail with status 409', () =>
@@ -122,7 +122,7 @@ describe('userController', () => {
             .spyOn(userRepository, 'create')
             .mockReturnValue(undefined);
 
-          res = await request.post('/user').send(registerData);
+          res = await request.post('/users').send(registerData);
         });
 
         it('should succeed with status 201', () =>
@@ -138,19 +138,19 @@ describe('userController', () => {
     });
   });
 
-  describe('POST /user/session', () => {
+  describe('POST /users/session', () => {
     let loginData;
     let user;
 
     describe('when no body is provided', () => {
       it('should fail with status 415', () =>
-        request.post('/user/session').expect(415));
+        request.post('/users/session').expect(415));
     });
 
     describe('when body is invalid', () => {
       it('should fail with status 400', () =>
         request
-          .post('/user/session')
+          .post('/users/session')
           .send({
             faltan: 'cosas'
           })
@@ -179,7 +179,7 @@ describe('userController', () => {
             .spyOn(userRepository, 'get')
             .mockReturnValue([]);
 
-          res = await request.post('/user/session').send(loginData);
+          res = await request.post('/users/session').send(loginData);
         });
 
         it('should fail with status 409', () =>
@@ -201,7 +201,7 @@ describe('userController', () => {
         describe('when password is incorrect', () => {
           beforeEach(async () => {
             res = await request
-              .post('/user/session')
+              .post('/users/session')
               .send({ ...loginData, password: 'incorrect' });
           });
 
@@ -221,7 +221,7 @@ describe('userController', () => {
                 .spyOn(userRepository, 'get')
                 .mockReturnValue([{ ...user, banned: true }]);
 
-              res = await request.post('/user/session').send(loginData);
+              res = await request.post('/users/session').send(loginData);
             });
 
             it('should fail with status 409', () =>
@@ -238,13 +238,13 @@ describe('userController', () => {
           describe('when user is not banned', () => {
             it('should respond with correct status and body', () =>
               request
-                .post('/user/session')
+                .post('/users/session')
                 .send(loginData)
                 .expect('Content-Type', /json/)
                 .expect(200, { id: user.id }));
 
             it('should have called userRepository.get correctly', async () => {
-              await request.post('/user/session').send(loginData);
+              await request.post('/users/session').send(loginData);
 
               expect(spyUserRepository.get).toHaveBeenCalledTimes(1);
               expect(spyUserRepository.get).toHaveBeenCalledWith(
@@ -292,7 +292,7 @@ describe('userController', () => {
             .spyOn(userRepository, 'create')
             .mockReturnValue(undefined);
 
-          res = await request.post('/user/session').send(loginData);
+          res = await request.post('/users/session').send(loginData);
         });
 
         it('should respond with correct status and body', () => {
@@ -328,7 +328,7 @@ describe('userController', () => {
               .spyOn(userRepository, 'getByFbId')
               .mockReturnValue([{ ...user, banned: true }]);
 
-            res = await request.post('/user/session').send(loginData);
+            res = await request.post('/users/session').send(loginData);
           });
 
           it('should fail with status 409', () =>
@@ -351,13 +351,13 @@ describe('userController', () => {
 
           it('should respond with correct status and body', () =>
             request
-              .post('/user/session')
+              .post('/users/session')
               .send(loginData)
               .expect('Content-Type', /json/)
               .expect(200, { id: user.id }));
 
           it('should have called userRepository.getByFbId correctly', async () => {
-            await request.post('/user/session').send(loginData);
+            await request.post('/users/session').send(loginData);
 
             expect(spyUserRepository.getByFbId).toHaveBeenCalledTimes(1);
             expect(spyUserRepository.getByFbId).toHaveBeenCalledWith(

@@ -29,7 +29,7 @@ tags:
 
 paths:
   # USERS
-  /user:
+  /users:
     get:
       summary: Get all users
       description: Get info from every user.
@@ -62,7 +62,7 @@ paths:
         500:
           $ref: '#/components/responses/500'
 
-  /user/session:
+  /users/session:
     post:
       summary: Log in an user session
       description: Allows users to log in to their account in a new session.
@@ -83,7 +83,7 @@ paths:
           $ref: '#/components/responses/500'
 
   # ADMINS
-  /admin:
+  /admins:
     post:
       summary: Register a new admin
       description: Allows admins to create a new basic account by email.
@@ -103,7 +103,7 @@ paths:
         500:
           $ref: '#/components/responses/500'
 
-  /admin/session:
+  /admins/session:
     post:
       summary: Log in an admin session
       description: Allows admins to log in to their account in a new session.
