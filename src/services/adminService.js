@@ -17,7 +17,7 @@ module.exports = function $adminService(
   async function login({ email, password }) {
     validationUtils.validateLoginData({ email, password });
 
-    const admins = await adminRepository.get(email);
+    const admins = await adminRepository.get({ email });
     if (!admins.length) throw errors.create(409, 'Email not registered');
     const admin = admins[0];
 

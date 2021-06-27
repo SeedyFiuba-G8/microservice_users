@@ -141,7 +141,9 @@ describe('adminController', () => {
 
         it('should have called adminRepository.get correctly', () => {
           expect(spyAdminRepository.get).toHaveBeenCalledTimes(1);
-          expect(spyAdminRepository.get).toHaveBeenCalledWith(loginData.email);
+          expect(spyAdminRepository.get).toHaveBeenCalledWith({
+            email: loginData.email
+          });
         });
       });
 
@@ -164,9 +166,9 @@ describe('adminController', () => {
 
           it('should have called adminRepository.get correctly', () => {
             expect(spyAdminRepository.get).toHaveBeenCalledTimes(1);
-            expect(spyAdminRepository.get).toHaveBeenCalledWith(
-              loginData.email
-            );
+            expect(spyAdminRepository.get).toHaveBeenCalledWith({
+              email: loginData.email
+            });
           });
         });
 
@@ -182,9 +184,9 @@ describe('adminController', () => {
             await request.post(path).send(loginData);
 
             expect(spyAdminRepository.get).toHaveBeenCalledTimes(1);
-            expect(spyAdminRepository.get).toHaveBeenCalledWith(
-              loginData.email
-            );
+            expect(spyAdminRepository.get).toHaveBeenCalledWith({
+              email: loginData.email
+            });
           });
         });
       });

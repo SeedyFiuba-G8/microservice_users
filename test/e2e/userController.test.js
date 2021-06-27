@@ -29,8 +29,8 @@ describe('userController', () => {
   describe('GET /users', () => {
     describe('when there are users', () => {
       beforeEach(async () => {
-        spyUserRepository.getAll = jest
-          .spyOn(userRepository, 'getAll')
+        spyUserRepository.get = jest
+          .spyOn(userRepository, 'get')
           .mockReturnValue(mockData.users);
 
         res = await request.get('/users');
@@ -42,14 +42,16 @@ describe('userController', () => {
         expect(res.body).toEqual({ users: mockData.parsedUsers });
       });
 
-      it('should have called userRepository once', () =>
-        expect(spyUserRepository.getAll).toHaveBeenCalledTimes(1));
+      it('should have called userRepository once', () => {
+        expect(spyUserRepository.get).toHaveBeenCalledTimes(1);
+        expect(spyUserRepository.get).toHaveBeenCalledWith();
+      });
     });
 
     describe('when there are no users', () => {
       beforeEach(async () => {
-        spyUserRepository.getAll = jest
-          .spyOn(userRepository, 'getAll')
+        spyUserRepository.get = jest
+          .spyOn(userRepository, 'get')
           .mockReturnValue([]);
 
         res = await request.get('/users');
@@ -61,8 +63,10 @@ describe('userController', () => {
         expect(res.body).toEqual({ users: [] });
       });
 
-      it('should have called userRepository once', () =>
-        expect(spyUserRepository.getAll).toHaveBeenCalledTimes(1));
+      it('should have called userRepository once', () => {
+        expect(spyUserRepository.get).toHaveBeenCalledTimes(1);
+        expect(spyUserRepository.get).toHaveBeenCalledWith();
+      });
     });
   });
 
@@ -187,7 +191,9 @@ describe('userController', () => {
 
         it('should have called userRepository.get correctly', () => {
           expect(spyUserRepository.get).toHaveBeenCalledTimes(1);
-          expect(spyUserRepository.get).toHaveBeenCalledWith(loginData.email);
+          expect(spyUserRepository.get).toHaveBeenCalledWith({
+            email: loginData.email
+          });
         });
       });
 
@@ -210,7 +216,9 @@ describe('userController', () => {
 
           it('should have called userRepository.get correctly', () => {
             expect(spyUserRepository.get).toHaveBeenCalledTimes(1);
-            expect(spyUserRepository.get).toHaveBeenCalledWith(loginData.email);
+            expect(spyUserRepository.get).toHaveBeenCalledWith({
+              email: loginData.email
+            });
           });
         });
 
@@ -229,9 +237,9 @@ describe('userController', () => {
 
             it('should have called userRepository.get correctly', () => {
               expect(spyUserRepository.get).toHaveBeenCalledTimes(1);
-              expect(spyUserRepository.get).toHaveBeenCalledWith(
-                loginData.email
-              );
+              expect(spyUserRepository.get).toHaveBeenCalledWith({
+                email: loginData.email
+              });
             });
           });
 
@@ -247,9 +255,9 @@ describe('userController', () => {
               await request.post('/users/session').send(loginData);
 
               expect(spyUserRepository.get).toHaveBeenCalledTimes(1);
-              expect(spyUserRepository.get).toHaveBeenCalledWith(
-                loginData.email
-              );
+              expect(spyUserRepository.get).toHaveBeenCalledWith({
+                email: loginData.email
+              });
             });
           });
         });
@@ -284,8 +292,8 @@ describe('userController', () => {
 
       describe('when user fbId is not registered (register)', () => {
         beforeEach(async () => {
-          spyUserRepository.getByFbId = jest
-            .spyOn(userRepository, 'getByFbId')
+          spyUserRepository.get = jest
+            .spyOn(userRepository, 'get')
             .mockReturnValue([]);
 
           spyUserRepository.create = jest
@@ -302,11 +310,11 @@ describe('userController', () => {
           });
         });
 
-        it('should have called userRepository.getByFbId correctly', () => {
-          expect(spyUserRepository.getByFbId).toHaveBeenCalledTimes(1);
-          expect(spyUserRepository.getByFbId).toHaveBeenCalledWith(
-            fbUserInfo.id
-          );
+        it('should have called userRepository.get correctly', () => {
+          expect(spyUserRepository.get).toHaveBeenCalledTimes(1);
+          expect(spyUserRepository.get).toHaveBeenCalledWith({
+            fbId: fbUserInfo.id
+          });
         });
 
         it('should have called userRepository.create correctly', () => {
@@ -324,8 +332,8 @@ describe('userController', () => {
       describe('when user fbId is already registered (login)', () => {
         describe('when user is banned', () => {
           beforeEach(async () => {
-            spyUserRepository.getByFbId = jest
-              .spyOn(userRepository, 'getByFbId')
+            spyUserRepository.get = jest
+              .spyOn(userRepository, 'get')
               .mockReturnValue([{ ...user, banned: true }]);
 
             res = await request.post('/users/session').send(loginData);
@@ -335,17 +343,17 @@ describe('userController', () => {
             expect(res.status).toEqual(409));
 
           it('should have called userRepository.getByFbId correctly', () => {
-            expect(spyUserRepository.getByFbId).toHaveBeenCalledTimes(1);
-            expect(spyUserRepository.getByFbId).toHaveBeenCalledWith(
-              fbUserInfo.id
-            );
+            expect(spyUserRepository.get).toHaveBeenCalledTimes(1);
+            expect(spyUserRepository.get).toHaveBeenCalledWith({
+              fbId: fbUserInfo.id
+            });
           });
         });
 
         describe('when user is not banned', () => {
           beforeEach(() => {
-            spyUserRepository.getByFbId = jest
-              .spyOn(userRepository, 'getByFbId')
+            spyUserRepository.get = jest
+              .spyOn(userRepository, 'get')
               .mockReturnValue([user]);
           });
 
@@ -356,13 +364,13 @@ describe('userController', () => {
               .expect('Content-Type', /json/)
               .expect(200, { id: user.id }));
 
-          it('should have called userRepository.getByFbId correctly', async () => {
+          it('should have called userRepository.get correctly', async () => {
             await request.post('/users/session').send(loginData);
 
-            expect(spyUserRepository.getByFbId).toHaveBeenCalledTimes(1);
-            expect(spyUserRepository.getByFbId).toHaveBeenCalledWith(
-              fbUserInfo.id
-            );
+            expect(spyUserRepository.get).toHaveBeenCalledTimes(1);
+            expect(spyUserRepository.get).toHaveBeenCalledWith({
+              fbId: fbUserInfo.id
+            });
           });
         });
       });

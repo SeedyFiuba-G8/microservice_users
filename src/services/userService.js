@@ -20,7 +20,7 @@ module.exports = function $userService(
    * @returns {Promise}
    */
   async function getAll() {
-    const users = await userRepository.getAll();
+    const users = await userRepository.get();
     return users.map(userUtils.buildAllUsersObject);
   }
 
@@ -29,7 +29,7 @@ module.exports = function $userService(
    */
   async function fbLogin({ fbToken }) {
     const fbUser = await fbGateway.fetchUser(fbToken);
-    const users = await userRepository.getByFbId(fbUser.id);
+    const users = await userRepository.get({ fbId: fbUser.id });
 
     if (!users.length) {
       const uuid = uuidv4();
@@ -56,7 +56,7 @@ module.exports = function $userService(
   async function login({ email, password }) {
     validationUtils.validateLoginData({ email, password });
 
-    const users = await userRepository.get(email);
+    const users = await userRepository.get({ email });
     if (!users.length)
       throw errors.create(409, 'Invalid email and password combination');
     const user = users[0];
