@@ -34,7 +34,7 @@ describe('userController', () => {
         beforeEach(async () => {
           spyUserRepository.get = jest
             .spyOn(userRepository, 'get')
-            .mockReturnValue(mockData.users);
+            .mockReturnValueOnce(mockData.users);
 
           res = await request.get(path);
         });
@@ -55,7 +55,7 @@ describe('userController', () => {
         beforeEach(async () => {
           spyUserRepository.get = jest
             .spyOn(userRepository, 'get')
-            .mockReturnValue([]);
+            .mockReturnValueOnce([]);
 
           res = await request.get(path);
         });
@@ -104,7 +104,7 @@ describe('userController', () => {
           beforeEach(async () => {
             spyUserRepository.create = jest
               .spyOn(userRepository, 'create')
-              .mockImplementation(() => {
+              .mockImplementationOnce(() => {
                 throw errors.create(409, 'Email already in use');
               });
 
@@ -126,7 +126,7 @@ describe('userController', () => {
           beforeEach(async () => {
             spyUserRepository.create = jest
               .spyOn(userRepository, 'create')
-              .mockReturnValue(undefined);
+              .mockReturnValueOnce(undefined);
 
             res = await request.post(path).send(registerData);
           });
@@ -186,7 +186,7 @@ describe('userController', () => {
           beforeEach(async () => {
             spyUserRepository.get = jest
               .spyOn(userRepository, 'get')
-              .mockReturnValue([]);
+              .mockReturnValueOnce([]);
 
             res = await request.post(path).send(loginData);
           });
@@ -203,14 +203,12 @@ describe('userController', () => {
         });
 
         describe('when email is registered', () => {
-          beforeEach(() => {
-            spyUserRepository.get = jest
-              .spyOn(userRepository, 'get')
-              .mockReturnValue([user]);
-          });
-
           describe('when password is incorrect', () => {
             beforeEach(async () => {
+              spyUserRepository.get = jest
+                .spyOn(userRepository, 'get')
+                .mockReturnValueOnce([user]);
+
               res = await request
                 .post(path)
                 .send({ ...loginData, password: 'incorrect' });
@@ -232,7 +230,7 @@ describe('userController', () => {
               beforeEach(async () => {
                 spyUserRepository.get = jest
                   .spyOn(userRepository, 'get')
-                  .mockReturnValue([{ ...user, banned: true }]);
+                  .mockReturnValueOnce([{ ...user, banned: true }]);
 
                 res = await request.post(path).send(loginData);
               });
@@ -249,6 +247,12 @@ describe('userController', () => {
             });
 
             describe('when user is not banned', () => {
+              beforeEach(async () => {
+                spyUserRepository.get = jest
+                  .spyOn(userRepository, 'get')
+                  .mockReturnValueOnce([user]);
+              });
+
               it('should respond with correct status and body', () =>
                 request
                   .post(path)
@@ -299,11 +303,11 @@ describe('userController', () => {
           beforeEach(async () => {
             spyUserRepository.get = jest
               .spyOn(userRepository, 'get')
-              .mockReturnValue([]);
+              .mockReturnValueOnce([]);
 
             spyUserRepository.create = jest
               .spyOn(userRepository, 'create')
-              .mockReturnValue(undefined);
+              .mockReturnValueOnce(undefined);
 
             res = await request.post(path).send(loginData);
           });
@@ -339,7 +343,7 @@ describe('userController', () => {
             beforeEach(async () => {
               spyUserRepository.get = jest
                 .spyOn(userRepository, 'get')
-                .mockReturnValue([{ ...user, banned: true }]);
+                .mockReturnValueOnce([{ ...user, banned: true }]);
 
               res = await request.post(path).send(loginData);
             });
@@ -359,7 +363,7 @@ describe('userController', () => {
             beforeEach(() => {
               spyUserRepository.get = jest
                 .spyOn(userRepository, 'get')
-                .mockReturnValue([user]);
+                .mockReturnValueOnce([user]);
             });
 
             it('should respond with correct status and body', () =>
