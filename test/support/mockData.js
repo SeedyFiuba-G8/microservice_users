@@ -31,7 +31,7 @@ module.exports = function $mockData() {
       banned: false,
       firstName: 'user',
       lastName: 'user',
-      signupDate: new Date('2021-06-13T21:29:29.330Z').toString()
+      signupDate: '2021-06-13T21:29:29.330Z'
     },
     {
       id: 'f5c43d00-91d7-4ff8-9ecb-8087e67a5ffd',
@@ -39,7 +39,7 @@ module.exports = function $mockData() {
       banned: true,
       firstName: 'banned',
       lastName: 'banned',
-      signupDate: new Date('2021-06-13T21:29:29.340Z').toString()
+      signupDate: '2021-06-13T21:29:29.340Z'
     }
   ];
 

@@ -1,6 +1,7 @@
 module.exports = function $userController(expressify, userService) {
   return expressify({
     getAll,
+    getProfile,
     login,
     register
   });
@@ -9,6 +10,13 @@ module.exports = function $userController(expressify, userService) {
     const users = await userService.getAll();
 
     return res.status(200).json({ users });
+  }
+
+  async function getProfile(req, res) {
+    const { userId } = req.params;
+    const profile = await userService.getProfile(userId);
+
+    return res.status(200).json(profile);
   }
 
   async function login(req, res) {
