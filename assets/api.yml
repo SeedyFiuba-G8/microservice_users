@@ -350,7 +350,7 @@ components:
           type: string
           example: 'Pomofot'
         signupDate:
-          $ref: '#/components/schemas/SignUpDate'
+          $ref: '#/components/schemas/Date'
       required:
         - id
         - email
@@ -398,7 +398,7 @@ components:
           type: boolean
           example: false
         signupDate:
-          $ref: '#/components/schemas/SignUpDate'
+          $ref: '#/components/schemas/Date'
         profilePicUrl:
           type: string
           example: 'https://imgur.com/gallery/rFvivtw'
@@ -454,7 +454,7 @@ components:
       required:
         - id
 
-    SignUpDate:
+    Date:
       type: string
       format: date-time
       example: '2021-06-13T21:29:29.330Z'
