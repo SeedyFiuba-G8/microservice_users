@@ -1,4 +1,4 @@
-module.exports = function $mockData() {
+module.exports = function $mockData(config) {
   const users = [
     {
       id: 'ca718a21-a126-484f-bc50-145126a6f75b',
@@ -43,5 +43,36 @@ module.exports = function $mockData() {
     }
   ];
 
-  return { users, parsedUsers };
+  const buildUser = ({
+    id,
+    email,
+    hashedPassword,
+    banned,
+    firstName,
+    lastName,
+    profilePicUrl,
+    signUpDate
+  }) => ({
+    id: id || 'a1c22d00-91d7-4ff8-9ecb-8087e67a5ffd',
+    email: email || 'default@email.com',
+    password:
+      hashedPassword ||
+      '$2b$10$R3YT8/4SxWGfajHg6lSJ3eLw2ASxqeO8kOhtN2t3h2RzBUln3YjEa',
+    fb_id: null,
+    banned: banned || false,
+    first_name: firstName || 'First',
+    last_name: lastName || 'Last',
+    profile_pic_url: profilePicUrl || null,
+    signup_date: signUpDate || new Date('2021-06-13T21:29:29.330Z')
+  });
+
+  const buildProfile = (user) => ({
+    firstName: user.first_name,
+    lastName: user.last_name,
+    banned: user.banned,
+    signupDate: user.signup_date.toJSON(),
+    profilePicUrl: user.profile_pic_url || config.default.profilePicUrl
+  });
+
+  return { buildProfile, buildUser, users, parsedUsers };
 };

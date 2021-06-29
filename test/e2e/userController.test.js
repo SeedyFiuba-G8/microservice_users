@@ -386,4 +386,72 @@ describe('userController', () => {
       });
     });
   });
+
+  describe('/users/:userId/profile', () => {
+    const pathForUserId = (userId) => `/users/${userId}/profile`;
+    const validUUID = '123e4567-e89b-12d3-a456-426614174000';
+
+    describe('GET', () => {
+      describe('when :userId param format is invalid', () => {
+        it('should fail with 400', () =>
+          request
+            .get(pathForUserId('invalidUUID'))
+            .expect('Content-Type', /json/)
+            .expect(400));
+      });
+
+      describe('when :userId param is valid', () => {
+        const path = pathForUserId(validUUID);
+
+        describe('when user does not exist', () => {
+          beforeEach(
+            () =>
+              (spyUserRepository.get = jest
+                .spyOn(userRepository, 'get')
+                .mockReturnValueOnce([]))
+          );
+
+          it('should fail with 404', () =>
+            request.get(path).expect('Content-Type', /json/).expect(404));
+
+          it('should have called userRepository once', async () => {
+            await request.get(path);
+
+            expect(spyUserRepository.get).toHaveBeenCalledTimes(1);
+            expect(spyUserRepository.get).toHaveBeenCalledWith({
+              id: validUUID
+            });
+          });
+        });
+
+        describe('when user exists', () => {
+          let profile;
+
+          beforeEach(() => {
+            const user = mockData.buildUser({ id: validUUID });
+            profile = mockData.buildProfile(user);
+
+            spyUserRepository.get = jest
+              .spyOn(userRepository, 'get')
+              .mockReturnValueOnce([user]);
+          });
+
+          it('should respond with correct status and body', () =>
+            request
+              .get(path)
+              .expect('Content-Type', /json/)
+              .expect(200, profile));
+
+          it('should have called userRepository once', async () => {
+            await request.get(path);
+
+            expect(spyUserRepository.get).toHaveBeenCalledTimes(1);
+            expect(spyUserRepository.get).toHaveBeenCalledWith({
+              id: validUUID
+            });
+          });
+        });
+      });
+    });
+  });
 });
