@@ -1,51 +1,19 @@
-module.exports = function $adminController(adminService) {
-  return {
-    getAll,
+module.exports = function $adminController(adminService, expressify) {
+  return expressify({
     login,
     register
-  };
+  });
 
-  /**
-   * @returns {Promise}
-   */
-  async function getAll(req, res, next) {
-    let admins;
-    try {
-      admins = await adminService.getAll();
-    } catch (err) {
-      return next(err);
-    }
-
-    return res.status(200).json({ admins });
-  }
-
-  /**
-   * @returns {Promise}
-   */
-  async function login(req, res, next) {
+  async function login(req, res) {
     const credentials = req.body;
-    let id;
-
-    try {
-      id = await adminService.login(credentials);
-    } catch (err) {
-      return next(err);
-    }
+    const id = await adminService.login(credentials);
 
     return res.status(200).json({ id });
   }
 
-  /**
-   * @returns {Promise}
-   */
-  async function register(req, res, next) {
+  async function register(req, res) {
     const adminData = req.body;
-
-    try {
-      await adminService.register(adminData);
-    } catch (err) {
-      return next(err);
-    }
+    await adminService.register(adminData);
 
     return res.status(201).send();
   }

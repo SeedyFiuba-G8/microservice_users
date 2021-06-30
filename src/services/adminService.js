@@ -7,18 +7,9 @@ module.exports = function $adminService(
   validationUtils
 ) {
   return {
-    getAll,
     login,
     register
   };
-
-  /**
-   *
-   * @returns {Promise}
-   */
-  async function getAll() {
-    return adminRepository.getAll();
-  }
 
   /**
    * @returns {Promise<String>}
@@ -26,12 +17,12 @@ module.exports = function $adminService(
   async function login({ email, password }) {
     validationUtils.validateLoginData({ email, password });
 
-    const admins = await adminRepository.get(email);
-    if (!admins.length) throw errors.Conflict('Email not registered');
+    const admins = await adminRepository.get({ email });
+    if (!admins.length) throw errors.create(409, 'Email not registered');
     const admin = admins[0];
 
     const match = await bcrypt.compare(password, admin.password);
-    if (!match) throw errors.Conflict('Invalid password');
+    if (!match) throw errors.create(409, 'Invalid password');
 
     return admin.id;
   }

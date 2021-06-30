@@ -1,6 +1,6 @@
 const axios = require('axios');
 
-module.exports = function fbGateway(errors) {
+module.exports = function fbGateway(config, errors) {
   return {
     fetchUser
   };
@@ -9,15 +9,12 @@ module.exports = function fbGateway(errors) {
    * @returns {undefined}
    */
   async function fetchUser(token) {
-    const url = `https://graph.facebook.com/me?fields=email,first_name,last_name&access_token=${token}`;
-    let response;
+    const { userByTokenBaseUrl } = config.gateways.fb;
+    const url = userByTokenBaseUrl + token;
 
-    try {
-      response = await axios.get(url);
-    } catch (err) {
-      throw errors.FromAxios(err);
-    }
-
-    return response.data;
+    return axios
+      .get(url)
+      .then((res) => res.data)
+      .catch((err) => Promise.reject(errors.FromAxios(err)));
   }
 };

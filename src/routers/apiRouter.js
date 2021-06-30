@@ -12,10 +12,6 @@ module.exports = function apiRouter(
       // Redirect root to api docs
       .get('/', (req, res) => res.redirect('/api-docs'))
 
-      // SPY ROUTES (debug only)
-      .get('/user', userController.getAll)
-      .get('/admin', adminController.getAll)
-
       // OpenAPI Validation Middleware
       .use(apiValidatorMiddleware)
 
@@ -26,11 +22,12 @@ module.exports = function apiRouter(
       // ROUTES
 
       // Users
-      .post('/user', userController.register)
-      .post('/user/session', userController.login)
+      .get('/users', userController.getAll)
+      .post('/users', userController.register)
+      .post('/users/session', userController.login)
 
       // Admins
-      .post('/admin', adminController.register)
-      .post('/admin/session', adminController.login)
+      .post('/admins', adminController.register)
+      .post('/admins/session', adminController.login)
   );
 };

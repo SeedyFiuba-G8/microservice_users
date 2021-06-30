@@ -1,39 +1,30 @@
+const _ = require('lodash');
+
 module.exports = function $adminRepository(errors, logger, knex) {
   return {
     create,
-    get,
-    getAll
+    get
   };
 
-  /**
-   * @returns {undefined}
-   */
-  async function create({ id, email, password }) {
-    try {
-      await knex('admins').insert({
+  function create({ id, email, password }) {
+    return knex('admins')
+      .insert({
         id,
         email,
         password
+      })
+      .catch((err) => {
+        if (err.code === '23505')
+          throw errors.create(409, 'Email already in use');
+
+        logger.error(err);
+        throw errors.UnknownError;
       });
-    } catch (err) {
-      if (err.code === '23505') throw errors.Conflict('Email already in use');
-
-      logger.error(err);
-      throw errors.InternalServerError();
-    }
   }
 
-  /**
-   * @returns {String}
-   */
-  function get(email) {
-    return knex('admins').where({ email }).select('*');
-  }
+  function get(filters = {}) {
+    const parsedFilters = _.omitBy({ email: filters.email }, _.isUndefined);
 
-  /**
-   * @returns {Promise}
-   */
-  function getAll() {
-    return knex('admins');
+    return knex('admins').where(parsedFilters).select('*');
   }
 };

@@ -1,15 +1,12 @@
+const _ = require('lodash');
+
 module.exports = function $userRepository(errors, logger, knex) {
   return {
     create,
-    get,
-    getAll,
-    getByFbId
+    get
   };
 
-  /**
-   * @returns {Promise<undefined>}
-   */
-  async function create({ id, email, password, fbId, firstName, lastName }) {
+  function create({ id, email, password, fbId, firstName, lastName }) {
     const userData = {
       id,
       email,
@@ -20,34 +17,23 @@ module.exports = function $userRepository(errors, logger, knex) {
     if (password) userData.password = password;
     if (fbId) userData.fb_id = fbId;
 
-    try {
-      await knex('users').insert(userData);
-    } catch (err) {
-      if (err.code === '23505') throw errors.Conflict('Email already in use');
+    return knex('users')
+      .insert(userData)
+      .catch((err) => {
+        if (err.code === '23505')
+          throw errors.create(409, 'Email already in use');
 
-      logger.error(err);
-      throw errors.InternalServerError();
-    }
+        logger.error(err);
+        throw errors.UnknownError;
+      });
   }
 
-  /**
-   * @returns {String}
-   */
-  function get(email) {
-    return knex('users').where({ email }).select('*');
-  }
+  function get(filters = {}) {
+    const parsedFilters = _.omitBy(
+      { email: filters.email, fb_id: filters.fbId },
+      _.isUndefined
+    );
 
-  /**
-   * @returns {Promise}
-   */
-  function getAll() {
-    return knex('users');
-  }
-
-  /**
-   * @returns {String}
-   */
-  function getByFbId(fbId) {
-    return knex('users').where({ fb_id: fbId }).select('*');
+    return knex('users').where(parsedFilters).select('*');
   }
 };

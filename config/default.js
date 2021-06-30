@@ -15,11 +15,11 @@ module.exports = {
         max: 20
       },
       firstName: {
-        min: 1,
+        min: 2,
         max: 20
       },
       lastName: {
-        min: 1,
+        min: 2,
         max: 20
       }
     }
@@ -27,6 +27,12 @@ module.exports = {
   express: {
     host: '0.0.0.0',
     port: _.get(process.env, 'PORT', 3000)
+  },
+  gateways: {
+    fb: {
+      userByTokenBaseUrl:
+        'https://graph.facebook.com/me?fields=email,first_name,last_name&access_token='
+    }
   },
   knex: {
     client: 'pg',

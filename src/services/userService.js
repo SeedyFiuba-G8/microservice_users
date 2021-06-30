@@ -5,6 +5,7 @@ module.exports = function $userService(
   errors,
   fbGateway,
   userRepository,
+  userUtils,
   validationUtils
 ) {
   return {
@@ -19,7 +20,8 @@ module.exports = function $userService(
    * @returns {Promise}
    */
   async function getAll() {
-    return userRepository.getAll();
+    const users = await userRepository.get();
+    return users.map(userUtils.buildAllUsersObject);
   }
 
   /**
@@ -27,7 +29,7 @@ module.exports = function $userService(
    */
   async function fbLogin({ fbToken }) {
     const fbUser = await fbGateway.fetchUser(fbToken);
-    const users = await userRepository.getByFbId(fbUser.id);
+    const users = await userRepository.get({ fbId: fbUser.id });
 
     if (!users.length) {
       const uuid = uuidv4();
@@ -43,6 +45,8 @@ module.exports = function $userService(
     }
 
     const user = users[0];
+    if (user.banned) throw errors.create(409, 'User is banned');
+
     return user.id;
   }
 
@@ -52,20 +56,22 @@ module.exports = function $userService(
   async function login({ email, password }) {
     validationUtils.validateLoginData({ email, password });
 
-    const users = await userRepository.get(email);
-    if (!users.length) throw errors.Conflict('Email not registered');
+    const users = await userRepository.get({ email });
+    if (!users.length)
+      throw errors.create(409, 'Invalid email and password combination');
     const user = users[0];
 
-    if (user.banned) throw errors.Conflict('User is banned');
-
     const match = await bcrypt.compare(password, user.password);
-    if (!match) throw errors.Conflict('Invalid password');
+    if (!match)
+      throw errors.create(409, 'Invalid email and password combination');
+
+    if (user.banned) throw errors.create(409, 'User is banned');
 
     return user.id;
   }
 
   /**
-   * @returns {undefined}
+   * @returns {Promise<undefined>}
    */
   async function register(userData) {
     validationUtils.validateUserRegisterData(userData);
