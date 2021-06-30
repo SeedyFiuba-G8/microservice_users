@@ -337,6 +337,10 @@ components:
       format: uuid
       example: '123e4567-e89b-12d3-a456-426614174000'
 
+    Picture:
+      type: string
+      example: 'https://imgur.com/gallery/rFvivtw'
+
     # USERS
     AllUsers:
       type: object
@@ -409,8 +413,7 @@ components:
         signupDate:
           $ref: '#/components/schemas/Date'
         profilePicUrl:
-          type: string
-          example: 'https://imgur.com/gallery/rFvivtw'
+          $ref: '#/components/schemas/Picture'
       required:
         - firstName
         - lastName
