@@ -10,6 +10,7 @@ module.exports = function $userService(
 ) {
   return {
     getAll,
+    getProfile,
     fbLogin,
     login,
     register
@@ -22,6 +23,18 @@ module.exports = function $userService(
   async function getAll() {
     const users = await userRepository.get();
     return users.map(userUtils.buildAllUsersObject);
+  }
+
+  /**
+   *
+   * @returns {Promise}
+   */
+  async function getProfile(userId) {
+    const users = await userRepository.get({ id: userId });
+    if (!users.length) throw errors.create(404, 'User not found');
+
+    const user = users[0];
+    return userUtils.buildProfile(user);
   }
 
   /**

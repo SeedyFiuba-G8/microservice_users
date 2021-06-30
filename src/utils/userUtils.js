@@ -1,6 +1,7 @@
-module.exports = function $userUtils() {
+module.exports = function $userUtils(config) {
   return {
-    buildAllUsersObject
+    buildAllUsersObject,
+    buildProfile
   };
 
   function buildAllUsersObject(user) {
@@ -10,7 +11,17 @@ module.exports = function $userUtils() {
       banned: user.banned,
       firstName: user.first_name,
       lastName: user.last_name,
-      signupDate: user.signup_date.toString()
+      signupDate: user.signup_date
+    };
+  }
+
+  function buildProfile(user) {
+    return {
+      firstName: user.first_name,
+      lastName: user.last_name,
+      banned: user.banned,
+      signupDate: user.signup_date,
+      profilePicUrl: user.profile_pic_url || config.default.profilePicUrl
     };
   }
 };

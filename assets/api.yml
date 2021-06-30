@@ -45,7 +45,7 @@ paths:
 
     post:
       summary: Register a new user
-      description: Allows users to create a new basic account by email.
+      description: Allow users to create a new basic account by email.
       tags:
         - Users
       requestBody:
@@ -65,7 +65,7 @@ paths:
   /users/session:
     post:
       summary: Log in an user session
-      description: Allows users to log in to their account in a new session.
+      description: Allow users to log in to their account in a new session.
       tags:
         - Users
       requestBody:
@@ -77,6 +77,31 @@ paths:
           $ref: '#/components/responses/400'
         409:
           $ref: '#/components/responses/409'
+        415:
+          $ref: '#/components/responses/415'
+        500:
+          $ref: '#/components/responses/500'
+
+  /users/{userId}/profile:
+    get:
+      summary: Get a user's profile
+      description: Allow users to retrieve a user's profile by id.
+      tags:
+        - Users
+      parameters:
+        - in: path
+          name: userId
+          schema:
+            $ref: '#/components/schemas/Id'
+          required: true
+          description: uuid of the user
+      responses:
+        200:
+          $ref: '#/components/responses/getProfile'
+        400:
+          $ref: '#/components/responses/400'
+        404:
+          $ref: '#/components/responses/404'
         415:
           $ref: '#/components/responses/415'
         500:
@@ -211,6 +236,13 @@ components:
           schema:
             $ref: '#/components/schemas/AllUsers'
 
+    getProfile:
+      description: User profile retrieved successfully.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Profile'
+
     # COMMON
     postSession:
       description: Logged in successfully.
@@ -287,6 +319,26 @@ components:
       required:
         - error
 
+    # TYPES
+    Date:
+      type: string
+      format: date-time
+      example: '2021-06-13T21:29:29.330Z'
+
+    Email:
+      type: string
+      format: email
+      example: 'example@email.com'
+
+    Id:
+      type: string
+      format: uuid
+      example: '123e4567-e89b-12d3-a456-426614174000'
+
+    Picture:
+      type: string
+      example: 'https://imgur.com/gallery/rFvivtw'
+
     # USERS
     AllUsers:
       type: object
@@ -302,11 +354,9 @@ components:
       type: object
       properties:
         id:
-          type: string
-          example: 'SomePassword123'
+          $ref: '#/components/schemas/Id'
         email:
-          type: string
-          example: 'memis_pomofot@gmail.com'
+          $ref: '#/components/schemas/Email'
         banned:
           type: boolean
           example: false
@@ -317,8 +367,7 @@ components:
           type: string
           example: 'Pomofot'
         signupDate:
-          type: string
-          example: '2021-06-13T21:29:29.340Z'
+          $ref: '#/components/schemas/Date'
       required:
         - id
         - email
@@ -331,8 +380,7 @@ components:
       type: object
       properties:
         email:
-          type: string
-          example: 'memis_pomofot@gmail.com'
+          $ref: '#/components/schemas/Email'
         password:
           type: string
           example: 'SomePassword123'
@@ -348,13 +396,35 @@ components:
         - firstName
         - lastName
 
+    Profile:
+      type: object
+      properties:
+        firstName:
+          type: string
+          example: 'Memis'
+        lastName:
+          type: string
+          example: 'Pomofot'
+        banned:
+          type: boolean
+          example: false
+        signupDate:
+          $ref: '#/components/schemas/Date'
+        profilePicUrl:
+          $ref: '#/components/schemas/Picture'
+      required:
+        - firstName
+        - lastName
+        - banned
+        - signupDate
+        - profilePicUrl
+
     # ADMINS
     AdminRegisterData:
       type: object
       properties:
         email:
-          type: string
-          example: 'memis_pomofot@gmail.com'
+          $ref: '#/components/schemas/Email'
         password:
           type: string
           example: 'SomePassword123'
@@ -367,8 +437,7 @@ components:
       type: object
       properties:
         email:
-          type: string
-          example: 'memis_pomofot@gmail.com'
+          $ref: '#/components/schemas/Email'
         password:
           type: string
           example: 'SomePassword123'
@@ -389,8 +458,7 @@ components:
       type: object
       properties:
         id:
-          type: string
-          example: 123e4567-e89b-12d3-a456-426614174000
+          $ref: '#/components/schemas/Id'
       required:
         - id
 

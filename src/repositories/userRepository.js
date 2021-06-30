@@ -30,7 +30,7 @@ module.exports = function $userRepository(errors, logger, knex) {
 
   function get(filters = {}) {
     const parsedFilters = _.omitBy(
-      { email: filters.email, fb_id: filters.fbId },
+      { id: filters.id, email: filters.email, fb_id: filters.fbId },
       _.isUndefined
     );
 
