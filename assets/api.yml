@@ -94,7 +94,7 @@ paths:
         - in: path
           name: userId
           schema:
-            $ref: '#/components/schemas/UserId'
+            $ref: '#/components/schemas/Id'
           required: true
           description: uuid of the user
       responses:
@@ -321,6 +321,22 @@ components:
       required:
         - error
 
+    # TYPES
+    Date:
+      type: string
+      format: date-time
+      example: '2021-06-13T21:29:29.330Z'
+
+    Email:
+      type: string
+      format: email
+      example: 'example@email.com'
+
+    Id:
+      type: string
+      format: uuid
+      example: '123e4567-e89b-12d3-a456-426614174000'
+
     # USERS
     AllUsers:
       type: object
@@ -336,10 +352,9 @@ components:
       type: object
       properties:
         id:
-          $ref: '#/components/schemas/UserId'
+          $ref: '#/components/schemas/Id'
         email:
-          type: string
-          example: 'memis_pomofot@gmail.com'
+          $ref: '#/components/schemas/Email'
         banned:
           type: boolean
           example: false
@@ -359,17 +374,11 @@ components:
         - lastName
         - signupDate
 
-    UserId:
-      type: string
-      format: uuid
-      example: '123e4567-e89b-12d3-a456-426614174000'
-
     UserRegisterData:
       type: object
       properties:
         email:
-          type: string
-          example: 'memis_pomofot@gmail.com'
+          $ref: '#/components/schemas/Email'
         password:
           type: string
           example: 'SomePassword123'
@@ -414,8 +423,7 @@ components:
       type: object
       properties:
         email:
-          type: string
-          example: 'memis_pomofot@gmail.com'
+          $ref: '#/components/schemas/Email'
         password:
           type: string
           example: 'SomePassword123'
@@ -428,8 +436,7 @@ components:
       type: object
       properties:
         email:
-          type: string
-          example: 'memis_pomofot@gmail.com'
+          $ref: '#/components/schemas/Email'
         password:
           type: string
           example: 'SomePassword123'
@@ -450,14 +457,9 @@ components:
       type: object
       properties:
         id:
-          $ref: '#/components/schemas/UserId'
+          $ref: '#/components/schemas/Id'
       required:
         - id
-
-    Date:
-      type: string
-      format: date-time
-      example: '2021-06-13T21:29:29.330Z'
 
     # STATUS
     Ping:
