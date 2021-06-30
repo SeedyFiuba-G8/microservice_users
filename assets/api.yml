@@ -86,8 +86,6 @@ paths:
     get:
       summary: Get a user's profile
       description: Allow users to retrieve a user's profile by id.
-      security:
-        - bearerAuth: []
       tags:
         - Users
       parameters:
