@@ -45,7 +45,7 @@ paths:
 
     post:
       summary: Register a new user
-      description: Allows users to create a new basic account by email.
+      description: Allow users to create a new basic account by email.
       tags:
         - Users
       requestBody:
@@ -65,11 +65,11 @@ paths:
   /users/session:
     post:
       summary: Log in an user session
-      description: Allows users to log in to their account in a new session.
+      description: Allow users to log in to their account in a new session.
       tags:
         - Users
       requestBody:
-        $ref: '#/components/requestBodies/postSession'
+        $ref: '#/components/requestBodies/postUserSession'
       responses:
         200:
           $ref: '#/components/responses/postSession'
@@ -77,6 +77,31 @@ paths:
           $ref: '#/components/responses/400'
         409:
           $ref: '#/components/responses/409'
+        415:
+          $ref: '#/components/responses/415'
+        500:
+          $ref: '#/components/responses/500'
+
+  /users/{userId}/profile:
+    get:
+      summary: Get a user's profile
+      description: Allow users to retrieve a user's profile by id.
+      tags:
+        - Users
+      parameters:
+        - in: path
+          name: userId
+          schema:
+            $ref: '#/components/schemas/Id'
+          required: true
+          description: uuid of the user
+      responses:
+        200:
+          $ref: '#/components/responses/getProfile'
+        400:
+          $ref: '#/components/responses/400'
+        404:
+          $ref: '#/components/responses/404'
         415:
           $ref: '#/components/responses/415'
         500:
@@ -110,7 +135,7 @@ paths:
       tags:
         - Admins
       requestBody:
-        $ref: '#/components/requestBodies/postSession'
+        $ref: '#/components/requestBodies/postAdminSession'
       responses:
         200:
           $ref: '#/components/responses/postSession'
@@ -151,6 +176,40 @@ paths:
 # =============================================================================
 
 components:
+  # ---------------------------------------------------------------------------
+  requestBodies:
+    # USERS
+    postUser:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UserRegisterData'
+
+    postUserSession:
+      required: true
+      content:
+        application/json:
+          schema:
+            oneOf:
+              - $ref: '#/components/schemas/LoginData'
+              - $ref: '#/components/schemas/FBLoginData'
+
+    # ADMINS
+    postAdmin:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AdminRegisterData'
+
+    postAdminSession:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/LoginData'
+
   # ---------------------------------------------------------------------------
   responses:
     # ERRORS
@@ -211,6 +270,13 @@ components:
           schema:
             $ref: '#/components/schemas/AllUsers'
 
+    getProfile:
+      description: User profile retrieved successfully.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Profile'
+
     # COMMON
     postSession:
       description: Logged in successfully.
@@ -233,34 +299,6 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Ping'
-
-  # ---------------------------------------------------------------------------
-  requestBodies:
-    # USERS
-    postUser:
-      required: true
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/UserRegisterData'
-
-    # ADMINS
-    postAdmin:
-      required: true
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/AdminRegisterData'
-
-    # COMMON
-    postSession:
-      required: true
-      content:
-        application/json:
-          schema:
-            oneOf:
-              - $ref: '#/components/schemas/LoginData'
-              - $ref: '#/components/schemas/FBLoginData'
 
   # ---------------------------------------------------------------------------
   schemas:
@@ -287,6 +325,30 @@ components:
       required:
         - error
 
+    # TYPES
+    Date:
+      type: string
+      format: date-time
+      example: '2021-06-13T21:29:29.330Z'
+
+    Email:
+      type: string
+      format: email
+      example: 'example@email.com'
+
+    FBToken:
+      type: string
+      example: 'EAAHTZAxeFHeUBACOZArY9H3yMDXtG7NF7K85VGt43keuBxd5LgAUz7gdCKdyyZCVGNGNqMZBy0J6HjlkldhIFm4RZBIPhqN0HSiZAbBvEsNIOIdhkzVmI1x6FWhRBtXORs1fXEyZCnkIPZCZCNVCaxbgisI1WjOyPRmYTCuGIpx014MY0FTYQxBXt7xr25ghdZChywWZAISf1escFnA1vVrBJylBXUEpt29Yvh557Ac0E8QYgZDZD'
+
+    Id:
+      type: string
+      format: uuid
+      example: '123e4567-e89b-12d3-a456-426614174000'
+
+    Picture:
+      type: string
+      example: 'https://imgur.com/gallery/rFvivtw'
+
     # USERS
     AllUsers:
       type: object
@@ -298,15 +360,44 @@ components:
       required:
         - users
 
+    FBLoginData:
+      type: object
+      properties:
+        fbToken:
+          $ref: '#/components/schemas/FBToken'
+      required:
+        - fbToken
+
+    Profile:
+      type: object
+      properties:
+        firstName:
+          type: string
+          example: 'Memis'
+        lastName:
+          type: string
+          example: 'Pomofot'
+        banned:
+          type: boolean
+          example: false
+        signupDate:
+          $ref: '#/components/schemas/Date'
+        profilePicUrl:
+          $ref: '#/components/schemas/Picture'
+      required:
+        - firstName
+        - lastName
+        - banned
+        - signupDate
+        - profilePicUrl
+
     User:
       type: object
       properties:
         id:
-          type: string
-          example: 'SomePassword123'
+          $ref: '#/components/schemas/Id'
         email:
-          type: string
-          example: 'memis_pomofot@gmail.com'
+          $ref: '#/components/schemas/Email'
         banned:
           type: boolean
           example: false
@@ -317,8 +408,7 @@ components:
           type: string
           example: 'Pomofot'
         signupDate:
-          type: string
-          example: '2021-06-13T21:29:29.340Z'
+          $ref: '#/components/schemas/Date'
       required:
         - id
         - email
@@ -331,8 +421,7 @@ components:
       type: object
       properties:
         email:
-          type: string
-          example: 'memis_pomofot@gmail.com'
+          $ref: '#/components/schemas/Email'
         password:
           type: string
           example: 'SomePassword123'
@@ -353,8 +442,7 @@ components:
       type: object
       properties:
         email:
-          type: string
-          example: 'memis_pomofot@gmail.com'
+          $ref: '#/components/schemas/Email'
         password:
           type: string
           example: 'SomePassword123'
@@ -367,8 +455,7 @@ components:
       type: object
       properties:
         email:
-          type: string
-          example: 'memis_pomofot@gmail.com'
+          $ref: '#/components/schemas/Email'
         password:
           type: string
           example: 'SomePassword123'
@@ -376,21 +463,11 @@ components:
         - email
         - password
 
-    FBLoginData:
-      type: object
-      properties:
-        fbToken:
-          type: string
-          example: 'EAAHTZAxeFHeUBACOZArY9H3yMDXtG7NF7K85VGt43keuBxd5LgAUz7gdCKdyyZCVGNGNqMZBy0J6HjlkldhIFm4RZBIPhqN0HSiZAbBvEsNIOIdhkzVmI1x6FWhRBtXORs1fXEyZCnkIPZCZCNVCaxbgisI1WjOyPRmYTCuGIpx014MY0FTYQxBXt7xr25ghdZChywWZAISf1escFnA1vVrBJylBXUEpt29Yvh557Ac0E8QYgZDZD'
-      required:
-        - fbToken
-
     Session:
       type: object
       properties:
         id:
-          type: string
-          example: 123e4567-e89b-12d3-a456-426614174000
+          $ref: '#/components/schemas/Id'
       required:
         - id
 
