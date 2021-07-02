@@ -25,7 +25,7 @@ module.exports = function apiRouter(
       .get('/users', userController.getAll)
       .post('/users', userController.register)
       .post('/users/session', userController.login)
-      .get('/users/:userId/profile', userController.getProfile)
+      .get('/users/:userId', userController.getProfile)
 
       // Admins
       .post('/admins', adminController.register)

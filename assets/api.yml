@@ -68,7 +68,7 @@ paths:
         default:
           $ref: '#/components/responses/Error'
 
-  /users/{userId}/profile:
+  /users/{userId}:
     get:
       summary: Get a user's profile
       description: Allow users to retrieve a user's profile by id.

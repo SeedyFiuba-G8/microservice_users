@@ -387,8 +387,8 @@ describe('userController', () => {
     });
   });
 
-  describe('/users/:userId/profile', () => {
-    const pathForUserId = (userId) => `/users/${userId}/profile`;
+  describe('/users/:userId', () => {
+    const pathForUserId = (userId) => `/users/${userId}`;
     const validUUID = '123e4567-e89b-12d3-a456-426614174000';
 
     describe('GET', () => {
