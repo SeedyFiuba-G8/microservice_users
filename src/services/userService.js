@@ -71,12 +71,11 @@ module.exports = function $userService(
 
     const users = await userRepository.get({ email });
     if (!users.length)
-      throw errors.create(409, 'Invalid email and password combination');
+      throw errors.create(409, 'Email or password is incorrect');
     const user = users[0];
 
     const match = await bcrypt.compare(password, user.password);
-    if (!match)
-      throw errors.create(409, 'Invalid email and password combination');
+    if (!match) throw errors.create(409, 'Email or password is incorrect');
 
     if (user.banned) throw errors.create(409, 'User is banned');
 

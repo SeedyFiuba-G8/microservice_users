@@ -18,11 +18,12 @@ module.exports = function $adminService(
     validationUtils.validateLoginData({ email, password });
 
     const admins = await adminRepository.get({ email });
-    if (!admins.length) throw errors.create(409, 'Email not registered');
+    if (!admins.length)
+      throw errors.create(409, 'Email or password is incorrect');
     const admin = admins[0];
 
     const match = await bcrypt.compare(password, admin.password);
-    if (!match) throw errors.create(409, 'Invalid password');
+    if (!match) throw errors.create(409, 'Email or password is incorrect');
 
     return admin.id;
   }
