@@ -50,9 +50,12 @@ module.exports = function $mockData(config) {
     banned,
     firstName,
     lastName,
-    profilePicUrl,
-    signUpDate
-  }) => ({
+    signUpDate,
+    city,
+    country,
+    interests,
+    profilePicUrl
+  } = {}) => ({
     id: id || 'a1c22d00-91d7-4ff8-9ecb-8087e67a5ffd',
     email: email || 'default@email.com',
     password:
@@ -62,8 +65,11 @@ module.exports = function $mockData(config) {
     banned: banned || false,
     first_name: firstName || 'First',
     last_name: lastName || 'Last',
-    profile_pic_url: profilePicUrl || null,
-    signup_date: signUpDate || new Date('2021-06-13T21:29:29.330Z')
+    signup_date: signUpDate || new Date('2021-06-13T21:29:29.330Z'),
+    city: city || 'Buenos Aires',
+    country: country || 'Argentina',
+    interests: interests || ['music', 'productivity'],
+    profile_pic_url: profilePicUrl || null
   });
 
   const buildProfile = (user) => ({
@@ -71,6 +77,9 @@ module.exports = function $mockData(config) {
     lastName: user.last_name,
     banned: user.banned,
     signupDate: user.signup_date.toJSON(),
+    city: user.city,
+    country: user.country,
+    interests: user.interests,
     profilePicUrl: user.profile_pic_url || config.default.profilePicUrl
   });
 

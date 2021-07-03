@@ -21,6 +21,9 @@ module.exports = function $userUtils(config) {
       lastName: user.last_name,
       banned: user.banned,
       signupDate: user.signup_date,
+      city: user.city || '',
+      country: user.country || '',
+      interests: user.interests || [],
       profilePicUrl: user.profile_pic_url || config.default.profilePicUrl
     };
   }

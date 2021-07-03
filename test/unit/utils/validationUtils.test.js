@@ -3,9 +3,11 @@ const containerFactory = require('../../testContainerFactory');
 const container = containerFactory.createContainer();
 
 describe('validationUtils', () => {
+  let config;
   let validationUtils;
 
   beforeEach(() => {
+    config = container.get('config');
     validationUtils = container.get('validationUtils');
   });
 
@@ -37,65 +39,37 @@ describe('validationUtils', () => {
     });
   });
 
-  describe('function validateName', () => {
-    describe('when firstName is too short', () => {
-      it('should throw error', () =>
-        expect(() => validationUtils.validateName('a', 'Pomofot')).toThrow());
+  describe('function validateInterests', () => {
+    let interests;
+    beforeEach(() => {
+      interests = ['music', 'movies', 'productivity'];
     });
 
-    describe('when lastName is too short', () => {
+    describe('when there are too many interests', () => {
+      beforeEach(() => {
+        const { max } = config.constraints.fields.interests;
+        for (let i = 0; i < max + 1; i += 1) {
+          interests.push(`interest ${i}`);
+        }
+      });
+
       it('should throw error', () =>
-        expect(() => validationUtils.validateName('Memis', 'a')).toThrow());
+        expect(() => validationUtils.validateInterests(interests)).toThrow());
     });
 
-    describe('when firstName is too long', () => {
+    describe('when any interest is too long', () => {
       it('should throw error', () =>
         expect(() =>
-          validationUtils.validateName(
-            'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
-            'Pomofot'
-          )
+          validationUtils.validateInterests([
+            ...interests,
+            'reallylonginterestbutreaaaaaaallylongliketoomuch'
+          ])
         ).toThrow());
     });
 
-    describe('when lastName is too long', () => {
-      it('should throw error', () =>
-        expect(() =>
-          validationUtils.validateName(
-            'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
-            'a'
-          )
-        ).toThrow());
-    });
-
-    describe('when name is valid', () => {
+    describe('when interests are valid', () => {
       it('should succeed silently', () =>
-        expect(validationUtils.validateName('Memis', 'Pomofot')).toBe(
-          undefined
-        ));
-    });
-  });
-
-  describe('function validatePassword', () => {
-    describe('when password is too short', () => {
-      it('should throw error', () =>
-        expect(() => validationUtils.validatePassword('123')).toThrow());
-    });
-
-    describe('when password is too long', () => {
-      it('should throw error', () =>
-        expect(() =>
-          validationUtils.validatePassword(
-            'veryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryveryverylongpassword'
-          )
-        ).toThrow());
-    });
-
-    describe('when password is valid', () => {
-      it('should succeed silently', () =>
-        expect(validationUtils.validatePassword('UnaPassword123')).toBe(
-          undefined
-        ));
+        expect(validationUtils.validateInterests(interests)).toBe(undefined));
     });
   });
 });
