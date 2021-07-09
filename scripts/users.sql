@@ -13,8 +13,11 @@ CREATE TABLE public.users (
 	-- Profile info
 	first_name			VARCHAR(20)					NOT NULL,
 	last_name			VARCHAR(20)					NOT NULL,
-	profile_pic_url		VARCHAR(255),
 	signup_date			TIMESTAMP WITH TIME ZONE	NOT NULL	DEFAULT CURRENT_TIMESTAMP(2),
+	city				VARCHAR(20),
+	country				VARCHAR(20),
+	interests			VARCHAR(20) ARRAY[64],
+	profile_pic_url		VARCHAR(255),
 
 	-- Uniques
 	UNIQUE(email),

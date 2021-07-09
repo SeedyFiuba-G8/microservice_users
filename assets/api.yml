@@ -87,6 +87,31 @@ paths:
         default:
           $ref: '#/components/responses/Error'
 
+    patch:
+      summary: Modify the information of a user's profile
+      description: Allows the user to update its information.
+      tags:
+        - Users
+      parameters:
+        - in: path
+          name: userId
+          schema:
+            $ref: '#/components/schemas/Id'
+          required: true
+          description: uuid of the user
+        - in: header
+          name: uid
+          schema:
+            $ref: '#/components/schemas/Id'
+          required: true
+      requestBody:
+        $ref: '#/components/requestBodies/patchUser'
+      responses:
+        200:
+          description: 'User information updated successfully.'
+        default:
+          $ref: '#/components/responses/Error'
+
   # ADMINS
   /admins:
     post:
@@ -143,6 +168,13 @@ components:
   # ---------------------------------------------------------------------------
   requestBodies:
     # USERS
+    patchUser:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PatchUserData'
+
     postUser:
       required: true
       content:
@@ -286,6 +318,24 @@ components:
       required:
         - fbToken
 
+    PatchUserData:
+      type: object
+      properties:
+        city:
+          type: string
+          example: 'Buenos Aires'
+        country:
+          type: string
+          example: 'Argentina'
+        interests:
+          type: array
+          items:
+            type: string
+          example: ['music', 'entertainment', 'productivity']
+        profilePicUrl:
+          $ref: '#/components/schemas/Picture'
+      minProperties: 1
+
     Profile:
       type: object
       properties:
@@ -300,6 +350,17 @@ components:
           example: false
         signupDate:
           $ref: '#/components/schemas/Date'
+        city:
+          type: string
+          example: 'Buenos Aires'
+        country:
+          type: string
+          example: 'Argentina'
+        interests:
+          type: array
+          items:
+            type: string
+          example: ['music', 'entertainment', 'productivity']
         profilePicUrl:
           $ref: '#/components/schemas/Picture'
       required:
@@ -307,6 +368,9 @@ components:
         - lastName
         - banned
         - signupDate
+        - city
+        - country
+        - interests
         - profilePicUrl
 
     User:

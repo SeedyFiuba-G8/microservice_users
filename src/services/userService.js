@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const { v4: uuidv4 } = require('uuid');
 
 module.exports = function $userService(
@@ -9,27 +10,15 @@ module.exports = function $userService(
   validationUtils
 ) {
   return {
+    get,
     getAll,
-    getProfile,
     fbLogin,
     login,
-    register
+    register,
+    update
   };
 
-  /**
-   *
-   * @returns {Promise}
-   */
-  async function getAll() {
-    const users = await userRepository.get();
-    return users.map(userUtils.buildAllUsersObject);
-  }
-
-  /**
-   *
-   * @returns {Promise}
-   */
-  async function getProfile(userId) {
+  async function get(userId) {
     const users = await userRepository.get({ id: userId });
     if (!users.length) throw errors.create(404, 'User not found');
 
@@ -37,9 +26,11 @@ module.exports = function $userService(
     return userUtils.buildProfile(user);
   }
 
-  /**
-   * @returns {Promise<String>}
-   */
+  async function getAll() {
+    const users = await userRepository.get();
+    return users.map(userUtils.buildAllUsersObject);
+  }
+
   async function fbLogin({ fbToken }) {
     const fbUser = await fbGateway.fetchUser(fbToken);
     const users = await userRepository.get({ fbId: fbUser.id });
@@ -63,9 +54,6 @@ module.exports = function $userService(
     return user.id;
   }
 
-  /**
-   * @returns {Promise<String>}
-   */
   async function login({ email, password }) {
     validationUtils.validateLoginData({ email, password });
 
@@ -82,9 +70,6 @@ module.exports = function $userService(
     return user.id;
   }
 
-  /**
-   * @returns {Promise<undefined>}
-   */
   async function register(userData) {
     validationUtils.validateUserRegisterData(userData);
 
@@ -96,5 +81,23 @@ module.exports = function $userService(
       id: uuid,
       password: encryptedPassword
     });
+  }
+
+  async function update(requester, { userId, updatedUserData }) {
+    if (userId !== requester)
+      throw errors.create(403, 'Only the user can modify its information');
+
+    const validFields = ['city', 'country', 'interests', 'profilePicUrl'];
+    const parsedData = _.pick(updatedUserData, validFields);
+
+    if (_.isEmpty(parsedData))
+      throw errors.create(
+        400,
+        `At least should have one valid field. Valid fields: [${validFields}]`
+      );
+
+    validationUtils.validateUpdatedUserData(updatedUserData);
+
+    await userRepository.update(userId, updatedUserData);
   }
 };
