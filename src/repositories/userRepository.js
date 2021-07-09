@@ -38,13 +38,16 @@ module.exports = function $userRepository(errors, logger, knex) {
     return knex('users').where(parsedFilters).select('*');
   }
 
-  function update(userId, updatedUserData) {
-    const updateData = {
-      ...updatedUserData,
-      profile_pic_url: updatedUserData.profilePicUrl
-    };
+  async function update(userId, updatedUserData) {
+    const updateData = _.omitBy(
+      {
+        ..._.pick(updatedUserData, ['city', 'country', 'interests']),
+        profile_pic_url: updatedUserData.profilePicUrl
+      },
+      _.isUndefined
+    );
 
-    const result = knex('users').update(updateData).where('id', userId);
-    if (!result) throw errors.create(404, 'User not found');
+    if (!(await knex('users').update(updateData).where('id', userId)))
+      throw errors.create(404, 'User not found');
   }
 };
