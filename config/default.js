@@ -15,12 +15,31 @@ module.exports = {
         max: 20
       },
       firstName: {
-        min: 2,
+        min: 1,
         max: 20
       },
       lastName: {
-        min: 2,
+        min: 1,
         max: 20
+      },
+      city: {
+        min: 1,
+        max: 20
+      },
+      country: {
+        min: 1,
+        max: 20
+      },
+      interest: {
+        min: 1,
+        max: 20
+      },
+      interests: {
+        max: 64
+      },
+      profilePicUrl: {
+        min: 1,
+        max: 255
       }
     }
   },

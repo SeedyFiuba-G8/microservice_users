@@ -387,9 +387,10 @@ describe('userController', () => {
     });
   });
 
-  describe('/users/:userId/profile', () => {
-    const pathForUserId = (userId) => `/users/${userId}/profile`;
+  describe('/users/:userId', () => {
+    const pathForUserId = (userId) => `/users/${userId}`;
     const validUUID = '123e4567-e89b-12d3-a456-426614174000';
+    const path = pathForUserId(validUUID);
 
     describe('GET', () => {
       describe('when :userId param format is invalid', () => {
@@ -401,8 +402,6 @@ describe('userController', () => {
       });
 
       describe('when :userId param is valid', () => {
-        const path = pathForUserId(validUUID);
-
         describe('when user does not exist', () => {
           beforeEach(
             () =>
@@ -449,6 +448,104 @@ describe('userController', () => {
             expect(spyUserRepository.get).toHaveBeenCalledWith({
               id: validUUID
             });
+          });
+        });
+      });
+    });
+
+    describe('PATCH', () => {
+      describe('when :userId param format is invalid', () => {
+        it('should fail with 400', () =>
+          request
+            .patch(pathForUserId('invalidUUID'))
+            .set('uid', validUUID)
+            .send({ country: 'Argentina' })
+            .expect('Content-Type', /json/)
+            .expect(400));
+      });
+
+      describe('when no body is provided', () => {
+        it('should fail with status 415', () =>
+          request.patch(path).set('uid', validUUID).send().expect(415));
+      });
+
+      describe('when body is invalid', () => {
+        it('should fail with status 400', () =>
+          request
+            .patch(path)
+            .set('uid', validUUID)
+            .send({
+              faltan: 'cosas'
+            })
+            .expect(400));
+      });
+
+      describe('when no uid header is provided', () => {
+        it('should fail with status 400', () =>
+          request.patch(path).send({ country: 'Argentina' }).expect(400));
+      });
+
+      describe('when request is valid', () => {
+        const body = {
+          city: 'Buenos Aires',
+          country: 'Argentina',
+          interests: ['movies', 'pictures'],
+          profilePicUrl:
+            'https://cdn.computerhoy.com/sites/navi.axelspringer.es/public/styles/1200/public/media/image/2018/08/fotos-perfil-whatsapp_16.jpg?itok=fl2H3Opv'
+        };
+
+        describe('when requester is not the user', () => {
+          it('should fail with status 403', () =>
+            request
+              .patch(path)
+              .set('uid', validUUID.replace('1', '3'))
+              .send(body)
+              .expect(403));
+        });
+
+        describe('when user does not exist', () => {
+          beforeEach(
+            () =>
+              (spyUserRepository.update = jest
+                .spyOn(userRepository, 'update')
+                .mockImplementationOnce(() => {
+                  throw errors.create(404, 'User not found');
+                }))
+          );
+
+          it('should fail with 404', () =>
+            request.patch(path).set('uid', validUUID).send(body).expect(404));
+
+          it('should have called userRepository once', async () => {
+            await request.patch(path).set('uid', validUUID).send(body);
+
+            expect(spyUserRepository.update).toHaveBeenCalledTimes(1);
+            expect(spyUserRepository.update).toHaveBeenCalledWith(
+              validUUID,
+              body
+            );
+          });
+        });
+
+        describe('when user exists', () => {
+          beforeEach(
+            () =>
+              (spyUserRepository.update = jest
+                .spyOn(userRepository, 'update')
+                .mockReturnValueOnce(undefined))
+          );
+
+          it('should respond with correct status and body', () =>
+            request.patch(path).set('uid', validUUID).send(body).expect(200));
+
+          it('should have called userRepository once', async () => {
+            await request.patch(path).set('uid', validUUID).send(body);
+
+            expect(spyUserRepository.update).toHaveBeenCalledTimes(1);
+            expect(spyUserRepository.update).toHaveBeenCalledWith(
+              validUUID,
+              body
+            );
           });
         });
       });

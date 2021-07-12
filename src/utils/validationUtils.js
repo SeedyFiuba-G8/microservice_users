@@ -5,76 +5,77 @@ module.exports = function $validationUtils(config, errors) {
     // Wrappers
     validateAdminRegisterData,
     validateLoginData,
+    validateUpdatedUserData,
     validateUserRegisterData,
 
     // Validators
+    validateByLength,
     validateEmail,
-    validateName,
-    validatePassword
+    validateInterests
   };
 
   function validateAdminRegisterData({ email, password }) {
     validateEmail(email);
-    validatePassword(password);
+    validateByLength('password', password);
   }
 
   function validateLoginData({ email, password }) {
     validateEmail(email);
-    validatePassword(password);
+    validateByLength('password', password);
+  }
+
+  function validateUpdatedUserData({
+    city,
+    country,
+    interests,
+    profilePicUrl
+  }) {
+    if (city) validateByLength('city', city);
+    if (country) validateByLength('country', country);
+    if (interests) validateInterests(interests);
+    if (profilePicUrl) validateByLength('profilePicUrl', profilePicUrl);
   }
 
   function validateUserRegisterData({ email, password, firstName, lastName }) {
     validateEmail(email);
-    validatePassword(password);
-    validateName(firstName, lastName);
+    validateByLength('password', password);
+    validateByLength('firstName', firstName);
+    validateByLength('lastName', lastName);
   }
 
   // Validators
 
-  function validateEmail(email) {
-    const minLength = config.constraints.fields.email.min;
-    const maxLength = config.constraints.fields.email.max;
+  function validateByLength(field, value) {
+    const minLength = config.constraints.fields[field].min;
+    const maxLength = config.constraints.fields[field].max;
 
-    if (!validLength({ field: email, minLength, maxLength }))
+    if (!validLength({ field: value, minLength, maxLength }))
       throw errors.create(
         409,
-        `Email is invalid: its length must be within ${minLength} and ${maxLength} chars.`
+        `Field ${field} is invalid: its length must be within ${minLength} and ${maxLength} chars.`
       );
+  }
+
+  function validateEmail(email) {
+    validateByLength('email', email);
 
     if (!emailValidator.validate(email)) {
       throw errors.create(409, 'Email is invalid');
     }
   }
 
-  function validateName(firstName, lastName) {
-    let minLength = config.constraints.fields.firstName.min;
-    let maxLength = config.constraints.fields.firstName.max;
+  function validateInterests(interests) {
+    const maxInterests = config.constraints.fields.interests.max;
 
-    if (!validLength({ field: firstName, minLength, maxLength }))
+    if (interests.length > maxInterests)
       throw errors.create(
         409,
-        `First name is invalid: its length must be within ${minLength} and ${maxLength} chars.`
+        `Any user may have up to ${maxInterests} interests.`
       );
 
-    minLength = config.constraints.fields.lastName.min;
-    maxLength = config.constraints.fields.lastName.max;
-
-    if (!validLength({ field: lastName, minLength, maxLength }))
-      throw errors.create(
-        409,
-        `Last name is invalid: its length must be within ${minLength} and ${maxLength} chars.`
-      );
-  }
-
-  function validatePassword(password) {
-    const minLength = config.constraints.fields.password.min;
-    const maxLength = config.constraints.fields.password.max;
-
-    if (!validLength({ field: password, minLength, maxLength }))
-      throw errors.create(
-        409,
-        `Password is invalid: its length must be within ${minLength} and ${maxLength} chars.`
-      );
+    interests.forEach((interest) => {
+      validateByLength('interest', interest);
+    });
   }
 
   // Aux

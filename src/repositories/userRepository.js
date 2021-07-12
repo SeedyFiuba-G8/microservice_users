@@ -3,7 +3,8 @@ const _ = require('lodash');
 module.exports = function $userRepository(errors, logger, knex) {
   return {
     create,
-    get
+    get,
+    update
   };
 
   function create({ id, email, password, fbId, firstName, lastName }) {
@@ -35,5 +36,18 @@ module.exports = function $userRepository(errors, logger, knex) {
     );
 
     return knex('users').where(parsedFilters).select('*');
+  }
+
+  async function update(userId, updatedUserData) {
+    const updateData = _.omitBy(
+      {
+        ..._.pick(updatedUserData, ['city', 'country', 'interests']),
+        profile_pic_url: updatedUserData.profilePicUrl
+      },
+      _.isUndefined
+    );
+
+    if (!(await knex('users').update(updateData).where('id', userId)))
+      throw errors.create(404, 'User not found');
   }
 };
