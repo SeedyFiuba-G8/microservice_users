@@ -32,7 +32,8 @@ module.exports = function apiRouter(
       .post('/admins', adminController.register)
       .post('/admins/session', adminController.login)
 
-      // Names
-      .post('/names', userController.getNames)
+      // Translation
+      .post('/idtranslation', userController.translateIds)
+      .post('/emailtranslation', userController.translateEmails)
   );
 };

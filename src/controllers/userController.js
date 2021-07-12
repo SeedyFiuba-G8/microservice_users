@@ -2,9 +2,10 @@ module.exports = function $userController(expressify, userService) {
   return expressify({
     get,
     getAll,
-    getNames,
     login,
     register,
+    translateEmails,
+    translateIds,
     update
   });
 
@@ -19,13 +20,6 @@ module.exports = function $userController(expressify, userService) {
     const users = await userService.getAll();
 
     return res.status(200).json({ users });
-  }
-
-  async function getNames(req, res) {
-    const userIds = req.body;
-    const names = await userService.getNames(userIds);
-
-    return res.status(200).json(names);
   }
 
   async function login(req, res) {
@@ -44,6 +38,20 @@ module.exports = function $userController(expressify, userService) {
     await userService.register(userData);
 
     return res.status(201).send();
+  }
+
+  async function translateEmails(req, res) {
+    const userEmails = req.body;
+    const ids = await userService.translateEmails(userEmails);
+
+    return res.status(200).json(ids);
+  }
+
+  async function translateIds(req, res) {
+    const userIds = req.body;
+    const names = await userService.translateIds(userIds);
+
+    return res.status(200).json(names);
   }
 
   async function update(req, res) {
