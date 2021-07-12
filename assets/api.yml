@@ -141,6 +141,21 @@ paths:
         default:
           $ref: '#/components/responses/Error'
 
+  # NAMES
+  /names:
+    post:
+      summary: Translates ids to names
+      description: Translates user ids to first and last name
+      tags:
+        - Users
+      requestBody:
+        $ref: '#/components/requestBodies/postNames'
+      responses:
+        200:
+          $ref: '#/components/responses/postNames'
+        default:
+          $ref: '#/components/responses/Error'
+
   # STATUS
   /ping:
     get:
@@ -206,6 +221,16 @@ components:
           schema:
             $ref: '#/components/schemas/LoginData'
 
+    # NAMES
+    postNames:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/Id'
+
   # ---------------------------------------------------------------------------
   responses:
     Error:
@@ -239,6 +264,14 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Session'
+
+    # NAMES
+    postNames:
+      description: Names retrieved successfully.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Names'
 
     # STATUS
     health:
@@ -431,6 +464,23 @@ components:
       required:
         - email
         - password
+
+    # NAMES
+    Names:
+      type: object
+      properties:
+        someId:
+          type: object
+          properties:
+            firstName:
+              type: string
+              example: 'Memis'
+            lastName:
+              type: string
+              example: 'Pomofot'
+          required:
+            - firstName
+            - lastName
 
     # COMMON
     LoginData:

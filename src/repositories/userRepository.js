@@ -4,6 +4,7 @@ module.exports = function $userRepository(errors, logger, knex) {
   return {
     create,
     get,
+    getNames,
     update
   };
 
@@ -36,6 +37,12 @@ module.exports = function $userRepository(errors, logger, knex) {
     );
 
     return knex('users').where(parsedFilters).select('*');
+  }
+
+  function getNames(userIds) {
+    return knex('users')
+      .whereIn('id', userIds)
+      .select(['id', 'first_name', 'last_name']);
   }
 
   async function update(userId, updatedUserData) {
