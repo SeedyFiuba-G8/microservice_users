@@ -2,6 +2,7 @@ module.exports = function $userController(expressify, userService) {
   return expressify({
     get,
     getAll,
+    getNames,
     login,
     register,
     update
@@ -18,6 +19,13 @@ module.exports = function $userController(expressify, userService) {
     const users = await userService.getAll();
 
     return res.status(200).json({ users });
+  }
+
+  async function getNames(req, res) {
+    const userIds = req.body;
+    const names = await userService.getNames(userIds);
+
+    return res.status(200).json(names);
   }
 
   async function login(req, res) {

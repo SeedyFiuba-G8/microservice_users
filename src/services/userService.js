@@ -12,6 +12,7 @@ module.exports = function $userService(
   return {
     get,
     getAll,
+    getNames,
     fbLogin,
     login,
     register,
@@ -29,6 +30,24 @@ module.exports = function $userService(
   async function getAll() {
     const users = await userRepository.get();
     return users.map(userUtils.buildAllUsersObject);
+  }
+
+  async function getNames(userIds) {
+    if (!userIds.length) throw errors.create(409, 'Empty userIds requested');
+
+    const names = {};
+    const rawNames = await userRepository.getNames(userIds);
+    if (rawNames.length !== userIds.length)
+      throw errors.create(404, 'Some user does not exist');
+
+    rawNames.forEach((name) => {
+      names[name.id] = {
+        firstName: name.first_name,
+        lastName: name.last_name
+      };
+    });
+
+    return names;
   }
 
   async function fbLogin({ fbToken }) {
