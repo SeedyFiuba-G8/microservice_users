@@ -436,7 +436,6 @@ components:
         - city
         - country
         - interests
-        - profilePicUrl
 
     User:
       type: object

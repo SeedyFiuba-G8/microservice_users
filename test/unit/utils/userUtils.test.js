@@ -39,8 +39,7 @@ describe('userUtils', () => {
       'signupDate',
       'city',
       'country',
-      'interests',
-      'profilePicUrl'
+      'interests'
     ];
 
     describe('when default user is passed', () => {
