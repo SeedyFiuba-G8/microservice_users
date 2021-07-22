@@ -4,6 +4,8 @@ module.exports = function $userController(expressify, userService) {
     getAll,
     login,
     register,
+    translateEmails,
+    translateIds,
     update
   });
 
@@ -36,6 +38,20 @@ module.exports = function $userController(expressify, userService) {
     await userService.register(userData);
 
     return res.status(201).send();
+  }
+
+  async function translateEmails(req, res) {
+    const userEmails = req.body;
+    const ids = await userService.translateEmails(userEmails);
+
+    return res.status(200).json(ids);
+  }
+
+  async function translateIds(req, res) {
+    const userIds = req.body;
+    const names = await userService.translateIds(userIds);
+
+    return res.status(200).json(names);
   }
 
   async function update(req, res) {

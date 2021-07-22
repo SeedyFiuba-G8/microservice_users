@@ -141,6 +141,35 @@ paths:
         default:
           $ref: '#/components/responses/Error'
 
+  # TRANSLATION
+  /idtranslation:
+    post:
+      summary: Translates ids to names
+      description: Translates user ids to first and last name
+      tags:
+        - Users
+      requestBody:
+        $ref: '#/components/requestBodies/postIdTranslation'
+      responses:
+        200:
+          $ref: '#/components/responses/postIdTranslation'
+        default:
+          $ref: '#/components/responses/Error'
+
+  /emailtranslation:
+    post:
+      summary: Translates emails to ids
+      description: Translates user emails to ids
+      tags:
+        - Users
+      requestBody:
+        $ref: '#/components/requestBodies/postEmailTranslation'
+      responses:
+        200:
+          $ref: '#/components/responses/postEmailTranslation'
+        default:
+          $ref: '#/components/responses/Error'
+
   # STATUS
   /ping:
     get:
@@ -206,6 +235,25 @@ components:
           schema:
             $ref: '#/components/schemas/LoginData'
 
+    # TRANSLATION
+    postIdTranslation:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/Id'
+
+    postEmailTranslation:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/Email'
+
   # ---------------------------------------------------------------------------
   responses:
     Error:
@@ -239,6 +287,23 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Session'
+
+    # TRANSLATION
+    postIdTranslation:
+      description: IDs translated successfully.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Names'
+
+    postEmailTranslation:
+      description: Emails translated successfully.
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/Id'
 
     # STATUS
     health:
@@ -371,7 +436,6 @@ components:
         - city
         - country
         - interests
-        - profilePicUrl
 
     User:
       type: object
@@ -431,6 +495,26 @@ components:
       required:
         - email
         - password
+
+    # NAMES
+    Names:
+      type: object
+      properties:
+        someId:
+          type: object
+          properties:
+            email:
+              $ref: '#/components/schemas/Email'
+            firstName:
+              type: string
+              example: 'Memis'
+            lastName:
+              type: string
+              example: 'Pomofot'
+          required:
+            - email
+            - firstName
+            - lastName
 
     # COMMON
     LoginData:

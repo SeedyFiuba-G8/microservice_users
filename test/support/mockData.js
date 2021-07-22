@@ -1,4 +1,6 @@
-module.exports = function $mockData(config) {
+const _ = require('lodash');
+
+module.exports = function $mockData() {
   const users = [
     {
       id: 'ca718a21-a126-484f-bc50-145126a6f75b',
@@ -72,16 +74,20 @@ module.exports = function $mockData(config) {
     profile_pic_url: profilePicUrl || null
   });
 
-  const buildProfile = (user) => ({
-    firstName: user.first_name,
-    lastName: user.last_name,
-    banned: user.banned,
-    signupDate: user.signup_date.toJSON(),
-    city: user.city,
-    country: user.country,
-    interests: user.interests,
-    profilePicUrl: user.profile_pic_url || config.default.profilePicUrl
-  });
+  const buildProfile = (user) =>
+    _.omitBy(
+      {
+        firstName: user.first_name,
+        lastName: user.last_name,
+        banned: user.banned,
+        signupDate: user.signup_date.toJSON(),
+        city: user.city,
+        country: user.country,
+        interests: user.interests,
+        profilePicUrl: user.profile_pic_url || null
+      },
+      _.isNull
+    );
 
   return { buildProfile, buildUser, users, parsedUsers };
 };

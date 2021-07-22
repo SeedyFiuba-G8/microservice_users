@@ -1,4 +1,6 @@
-module.exports = function $userUtils(config) {
+const _ = require('lodash');
+
+module.exports = function $userUtils() {
   return {
     buildAllUsersObject,
     buildProfile
@@ -16,15 +18,18 @@ module.exports = function $userUtils(config) {
   }
 
   function buildProfile(user) {
-    return {
-      firstName: user.first_name,
-      lastName: user.last_name,
-      banned: user.banned,
-      signupDate: user.signup_date,
-      city: user.city || '',
-      country: user.country || '',
-      interests: user.interests || [],
-      profilePicUrl: user.profile_pic_url || config.default.profilePicUrl
-    };
+    return _.omitBy(
+      {
+        firstName: user.first_name,
+        lastName: user.last_name,
+        banned: user.banned,
+        signupDate: user.signup_date,
+        city: user.city || '',
+        country: user.country || '',
+        interests: user.interests || [],
+        profilePicUrl: user.profile_pic_url
+      },
+      _.isNull
+    );
   }
 };

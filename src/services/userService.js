@@ -15,6 +15,8 @@ module.exports = function $userService(
     fbLogin,
     login,
     register,
+    translateEmails,
+    translateIds,
     update
   };
 
@@ -81,6 +83,37 @@ module.exports = function $userService(
       id: uuid,
       password: encryptedPassword
     });
+  }
+
+  async function translateEmails(userEmails) {
+    if (!userEmails.length)
+      throw errors.create(409, 'Empty userEmails requested');
+
+    const ids = await userRepository.translateEmails(userEmails);
+    if (ids.length !== userEmails.length)
+      throw errors.create(404, 'Some user does not exist');
+
+    // Flatten before return
+    return ids.map((idObject) => idObject.id);
+  }
+
+  async function translateIds(userIds) {
+    if (!userIds.length) throw errors.create(409, 'Empty userIds requested');
+
+    const names = {};
+    const rawNames = await userRepository.translateIds(userIds);
+    if (rawNames.length !== userIds.length)
+      throw errors.create(404, 'Some user does not exist');
+
+    rawNames.forEach((name) => {
+      names[name.id] = {
+        email: name.email,
+        firstName: name.first_name,
+        lastName: name.last_name
+      };
+    });
+
+    return names;
   }
 
   async function update(requester, { userId, updatedUserData }) {
