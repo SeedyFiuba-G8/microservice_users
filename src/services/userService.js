@@ -83,6 +83,8 @@ module.exports = function $userService(
       id: uuid,
       password: encryptedPassword
     });
+
+    return uuid;
   }
 
   async function translateEmails(userEmails) {

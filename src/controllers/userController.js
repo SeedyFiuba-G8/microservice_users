@@ -35,9 +35,9 @@ module.exports = function $userController(expressify, userService) {
 
   async function register(req, res) {
     const userData = req.body;
-    await userService.register(userData);
+    const id = await userService.register(userData);
 
-    return res.status(201).send();
+    return res.status(201).json(id);
   }
 
   async function translateEmails(req, res) {
