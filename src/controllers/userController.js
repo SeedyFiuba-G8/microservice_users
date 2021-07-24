@@ -1,3 +1,5 @@
+const _ = require('lodash');
+
 module.exports = function $userController(expressify, userService) {
   return expressify({
     get,
@@ -35,9 +37,25 @@ module.exports = function $userController(expressify, userService) {
 
   async function register(req, res) {
     const userData = req.body;
-    await userService.register(userData);
+    const id = await userService.register(userData);
 
-    return res.status(201).send();
+    return res
+      .status(201)
+      .json({ id, ..._.pick(userData, ['email', 'firstName', 'lastName']) });
+  }
+
+  async function translateEmails(req, res) {
+    const userEmails = req.body;
+    const ids = await userService.translateEmails(userEmails);
+
+    return res.status(200).json(ids);
+  }
+
+  async function translateIds(req, res) {
+    const userIds = req.body;
+    const names = await userService.translateIds(userIds);
+
+    return res.status(200).json(names);
   }
 
   async function translateEmails(req, res) {

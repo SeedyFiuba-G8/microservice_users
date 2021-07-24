@@ -19,5 +19,6 @@ module.exports = {
     console: {
       level: 'debug'
     }
-  }
+  },
+  monitoring: false
 };

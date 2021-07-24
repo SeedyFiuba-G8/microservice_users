@@ -50,7 +50,7 @@ paths:
         $ref: '#/components/requestBodies/postUser'
       responses:
         201:
-          description: 'User was registered successfully.'
+          $ref: '#/components/responses/postUser'
         default:
           $ref: '#/components/responses/Error'
 
@@ -280,6 +280,13 @@ components:
           schema:
             $ref: '#/components/schemas/Profile'
 
+    postUser:
+      description: 'User was registered successfully.'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PostUserData'
+
     # COMMON
     postSession:
       description: Logged in successfully.
@@ -436,6 +443,25 @@ components:
         - city
         - country
         - interests
+
+    PostUserData:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/Id'
+        email:
+          $ref: '#/components/schemas/Email'
+        firstName:
+          type: string
+          example: 'Memis'
+        lastName:
+          type: string
+          example: 'Pomofot'
+      required:
+        - id
+        - email
+        - firstName
+        - lastName
 
     User:
       type: object
