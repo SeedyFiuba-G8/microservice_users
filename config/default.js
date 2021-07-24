@@ -70,5 +70,6 @@ module.exports = {
       stringify: false,
       label: 'microservice_users'
     }
-  }
+  },
+  monitoring: true
 };
