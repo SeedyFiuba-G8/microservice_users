@@ -285,7 +285,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Id'
+            $ref: '#/components/schemas/PostUserData'
 
     # COMMON
     postSession:
@@ -443,6 +443,25 @@ components:
         - city
         - country
         - interests
+
+    PostUserData:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/Id'
+        email:
+          $ref: '#/components/schemas/Email'
+        firstName:
+          type: string
+          example: 'Memis'
+        lastName:
+          type: string
+          example: 'Pomofot'
+      required:
+        - id
+        - email
+        - firstName
+        - lastName
 
     User:
       type: object
