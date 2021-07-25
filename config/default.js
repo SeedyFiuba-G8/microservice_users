@@ -45,7 +45,7 @@ module.exports = {
   },
   express: {
     host: '0.0.0.0',
-    port: _.get(process.env, 'PORT', 3000)
+    port: _.get(process.env, 'PORT', 3001)
   },
   gateways: {
     fb: {
@@ -59,16 +59,18 @@ module.exports = {
       connectionString: _.get(process.env, 'DATABASE_URL')
     }
   },
-  log: {
+  logger: {
     console: {
       enabled: true,
-      level: 'info',
-      timestamp: true,
-      prettyPrint: true,
-      json: false,
-      colorize: true,
-      stringify: false,
-      label: 'microservice_users'
+      level: _.get(process.env, 'LOGGER_LEVEL', 'info'),
+      prettyPrint: true
+    },
+    http: {
+      enabled: true,
+      level: _.get(process.env, 'LOGGER_LEVEL', 'info'),
+      host: _.get(process.env, 'SUMOLOGIC_HOST'),
+      path: _.get(process.env, 'SUMOLOGIC_PATH'),
+      ssl: true
     }
   },
   monitoring: true
