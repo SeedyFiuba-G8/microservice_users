@@ -5,6 +5,7 @@ module.exports = function $userService(
   bcrypt,
   errors,
   fbGateway,
+  logger,
   userRepository,
   userUtils,
   validationUtils
@@ -21,15 +22,40 @@ module.exports = function $userService(
   };
 
   async function get(userId) {
+    const selectFields = [
+      'firstName',
+      'lastName',
+      'banned',
+      'signupDate',
+      'city',
+      'country',
+      'interests',
+      'profilePicUrl'
+    ];
+
     const users = await userRepository.get({
       filters: {
         id: userId
-      }
+      },
+      select: selectFields
     });
-    if (!users.length) throw errors.create(404, 'User not found');
 
+    if (!users.length) throw errors.create(404, 'User not found');
     const user = users[0];
-    return userUtils.buildProfile(user);
+
+    logger.info({
+      message: 'retrieved user',
+      user
+    });
+
+    const built = userUtils.buildProfile(user);
+
+    logger.info({
+      message: 'built profile',
+      built
+    });
+
+    return built;
   }
 
   async function getAllBy(filters, limit, offset) {

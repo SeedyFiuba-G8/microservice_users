@@ -458,7 +458,17 @@ describe('userController', () => {
             expect(spyUserRepository.get).toHaveBeenCalledWith({
               filters: {
                 id: validUUID
-              }
+              },
+              select: [
+                'firstName',
+                'lastName',
+                'banned',
+                'signupDate',
+                'city',
+                'country',
+                'interests',
+                'profilePicUrl'
+              ]
             });
           });
         });
@@ -472,7 +482,18 @@ describe('userController', () => {
 
             spyUserRepository.get = jest
               .spyOn(userRepository, 'get')
-              .mockReturnValueOnce([user]);
+              .mockReturnValueOnce([
+                _.pick(user, [
+                  'firstName',
+                  'lastName',
+                  'banned',
+                  'signupDate',
+                  'city',
+                  'country',
+                  'interests',
+                  'profilePicUrl'
+                ])
+              ]);
           });
 
           it('should respond with correct status and body', () =>
@@ -488,7 +509,17 @@ describe('userController', () => {
             expect(spyUserRepository.get).toHaveBeenCalledWith({
               filters: {
                 id: validUUID
-              }
+              },
+              select: [
+                'firstName',
+                'lastName',
+                'banned',
+                'signupDate',
+                'city',
+                'country',
+                'interests',
+                'profilePicUrl'
+              ]
             });
           });
         });
