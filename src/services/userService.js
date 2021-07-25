@@ -11,7 +11,7 @@ module.exports = function $userService(
 ) {
   return {
     get,
-    getAll,
+    getAllBy,
     fbLogin,
     login,
     register,
@@ -21,21 +21,33 @@ module.exports = function $userService(
   };
 
   async function get(userId) {
-    const users = await userRepository.get({ id: userId });
+    const users = await userRepository.get({
+      filters: {
+        id: userId
+      }
+    });
     if (!users.length) throw errors.create(404, 'User not found');
 
     const user = users[0];
     return userUtils.buildProfile(user);
   }
 
-  async function getAll() {
-    const users = await userRepository.get();
-    return users.map(userUtils.buildAllUsersObject);
+  async function getAllBy(filters, limit, offset) {
+    const selectFields = [
+      'id',
+      'email',
+      'banned',
+      'firstName',
+      'lastName',
+      'signupDate'
+    ];
+
+    return userRepository.get({ filters, select: selectFields, limit, offset });
   }
 
   async function fbLogin({ fbToken }) {
     const fbUser = await fbGateway.fetchUser(fbToken);
-    const users = await userRepository.get({ fbId: fbUser.id });
+    const users = await userRepository.get({ filters: { fbId: fbUser.id } });
 
     if (!users.length) {
       const uuid = uuidv4();
@@ -59,7 +71,7 @@ module.exports = function $userService(
   async function login({ email, password }) {
     validationUtils.validateLoginData({ email, password });
 
-    const users = await userRepository.get({ email });
+    const users = await userRepository.get({ filters: { email } });
     if (!users.length)
       throw errors.create(409, 'Email or password is incorrect');
     const user = users[0];

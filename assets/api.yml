@@ -15,7 +15,7 @@ servers:
     description: 'Production'
   - url: https://sf-tdp2-users-dev.herokuapp.com/
     description: 'Staging'
-  - url: http://localhost:3000/
+  - url: http://localhost:3001/
     description: 'Local development'
 
 # =============================================================================
@@ -35,6 +35,37 @@ paths:
       description: Get info from every user.
       tags:
         - Users
+      parameters:
+        - in: query
+          name: firstName
+          required: false
+          schema:
+            type: string
+          description: First name of the user.
+        - in: query
+          name: lastName
+          required: false
+          schema:
+            type: string
+          description: Last name of the user.
+        - in: query
+          name: banned
+          required: false
+          schema:
+            type: boolean
+          description: User banned status.
+        - in: query
+          name: limit
+          required: false
+          schema:
+            type: integer
+          description: The number of users to be retrieved.
+        - in: query
+          name: offset
+          required: false
+          schema:
+            type: integer
+          description: The number of users we want to take as offset.
       responses:
         200:
           $ref: '#/components/responses/getAllUsers'

@@ -42,12 +42,24 @@ describe('userController', () => {
         it('should respond with correct status and body', () => {
           expect(res.status).toEqual(200);
           expect(res.header['content-type']).toMatch(/json/);
-          expect(res.body).toEqual({ users: mockData.parsedUsers });
+          expect(res.body).toEqual({ users: mockData.users });
         });
 
         it('should have called userRepository once', () => {
           expect(spyUserRepository.get).toHaveBeenCalledTimes(1);
-          expect(spyUserRepository.get).toHaveBeenCalledWith();
+          expect(spyUserRepository.get).toHaveBeenCalledWith({
+            filters: {},
+            limit: undefined,
+            offset: undefined,
+            select: [
+              'id',
+              'email',
+              'banned',
+              'firstName',
+              'lastName',
+              'signupDate'
+            ]
+          });
         });
       });
 
@@ -68,7 +80,19 @@ describe('userController', () => {
 
         it('should have called userRepository once', () => {
           expect(spyUserRepository.get).toHaveBeenCalledTimes(1);
-          expect(spyUserRepository.get).toHaveBeenCalledWith();
+          expect(spyUserRepository.get).toHaveBeenCalledWith({
+            filters: {},
+            limit: undefined,
+            offset: undefined,
+            select: [
+              'id',
+              'email',
+              'banned',
+              'firstName',
+              'lastName',
+              'signupDate'
+            ]
+          });
         });
       });
     });
@@ -197,7 +221,9 @@ describe('userController', () => {
           it('should have called userRepository.get correctly', () => {
             expect(spyUserRepository.get).toHaveBeenCalledTimes(1);
             expect(spyUserRepository.get).toHaveBeenCalledWith({
-              email: loginData.email
+              filters: {
+                email: loginData.email
+              }
             });
           });
         });
@@ -220,7 +246,9 @@ describe('userController', () => {
             it('should have called userRepository.get correctly', () => {
               expect(spyUserRepository.get).toHaveBeenCalledTimes(1);
               expect(spyUserRepository.get).toHaveBeenCalledWith({
-                email: loginData.email
+                filters: {
+                  email: loginData.email
+                }
               });
             });
           });
@@ -241,7 +269,9 @@ describe('userController', () => {
               it('should have called userRepository.get correctly', () => {
                 expect(spyUserRepository.get).toHaveBeenCalledTimes(1);
                 expect(spyUserRepository.get).toHaveBeenCalledWith({
-                  email: loginData.email
+                  filters: {
+                    email: loginData.email
+                  }
                 });
               });
             });
@@ -265,7 +295,9 @@ describe('userController', () => {
 
                 expect(spyUserRepository.get).toHaveBeenCalledTimes(1);
                 expect(spyUserRepository.get).toHaveBeenCalledWith({
-                  email: loginData.email
+                  filters: {
+                    email: loginData.email
+                  }
                 });
               });
             });
@@ -322,7 +354,9 @@ describe('userController', () => {
           it('should have called userRepository.get correctly', () => {
             expect(spyUserRepository.get).toHaveBeenCalledTimes(1);
             expect(spyUserRepository.get).toHaveBeenCalledWith({
-              fbId: fbUserInfo.id
+              filters: {
+                fbId: fbUserInfo.id
+              }
             });
           });
 
@@ -354,7 +388,9 @@ describe('userController', () => {
             it('should have called userRepository.getByFbId correctly', () => {
               expect(spyUserRepository.get).toHaveBeenCalledTimes(1);
               expect(spyUserRepository.get).toHaveBeenCalledWith({
-                fbId: fbUserInfo.id
+                filters: {
+                  fbId: fbUserInfo.id
+                }
               });
             });
           });
@@ -378,7 +414,9 @@ describe('userController', () => {
 
               expect(spyUserRepository.get).toHaveBeenCalledTimes(1);
               expect(spyUserRepository.get).toHaveBeenCalledWith({
-                fbId: fbUserInfo.id
+                filters: {
+                  fbId: fbUserInfo.id
+                }
               });
             });
           });
@@ -418,7 +456,9 @@ describe('userController', () => {
 
             expect(spyUserRepository.get).toHaveBeenCalledTimes(1);
             expect(spyUserRepository.get).toHaveBeenCalledWith({
-              id: validUUID
+              filters: {
+                id: validUUID
+              }
             });
           });
         });
@@ -446,7 +486,9 @@ describe('userController', () => {
 
             expect(spyUserRepository.get).toHaveBeenCalledTimes(1);
             expect(spyUserRepository.get).toHaveBeenCalledWith({
-              id: validUUID
+              filters: {
+                id: validUUID
+              }
             });
           });
         });

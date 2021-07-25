@@ -13,24 +13,6 @@ describe('userUtils', () => {
     user = mockData.buildUser();
   });
 
-  describe('function buildAllUsersObject', () => {
-    describe('when user is passed', () => {
-      const fields = [
-        'id',
-        'email',
-        'banned',
-        'firstName',
-        'lastName',
-        'signupDate'
-      ];
-
-      it('should contain correct fields', () => {
-        const result = userUtils.buildAllUsersObject(user);
-        fields.forEach((field) => expect(result).toHaveProperty(field));
-      });
-    });
-  });
-
   describe('function buildProfile', () => {
     const fields = [
       'firstName',
