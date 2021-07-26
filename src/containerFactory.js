@@ -51,6 +51,10 @@ function createContainer() {
     return errorComponents.errors();
   });
 
+  container.register('events', function $events(config) {
+    return config.events;
+  });
+
   container.register('expressify', function $expressify() {
     // eslint-disable-next-line global-require
     return require('expressify')();

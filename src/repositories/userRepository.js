@@ -2,12 +2,20 @@ const _ = require('lodash');
 
 module.exports = function $userRepository(dbUtils, errors, logger, knex) {
   return {
+    count,
     create,
     get,
     translateEmails,
     translateIds,
     update
   };
+
+  function count({ filters = {} } = {}) {
+    return knex('users')
+      .where(dbUtils.mapToDb(filters))
+      .count('id')
+      .then((result) => Number(result[0].count));
+  }
 
   function create({ id, email, password, fbId, firstName, lastName }) {
     const userData = {

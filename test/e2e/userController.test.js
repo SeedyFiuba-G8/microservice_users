@@ -11,6 +11,7 @@ describe('userController', () => {
   let res;
   let userNocks;
   let userRepository;
+  let eventRepository;
 
   const spyUserRepository = {};
 
@@ -19,7 +20,13 @@ describe('userController', () => {
     mockData = container.get('mockData');
     userNocks = container.get('userNocks');
     userRepository = container.get('userRepository');
+    eventRepository = container.get('eventRepository');
     request = supertest(container.get('app'));
+  });
+
+  beforeEach(() => {
+    // Mock values for events
+    jest.spyOn(eventRepository, 'log').mockImplementationOnce(() => {});
   });
 
   afterEach(() => {
