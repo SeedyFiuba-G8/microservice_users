@@ -81,11 +81,11 @@ module.exports = function $metricService(
 
   // Aux
   function parseDates(rawInitialDate, rawFinalDate) {
-    if (rawInitialDate === undefined || rawFinalDate === undefined)
-      throw errors.create(400, 'Invalid dates');
+    if (rawInitialDate === undefined) throw errors.create(400, 'Invalid dates');
 
     const initialDate = new Date(rawInitialDate);
-    const finalDate = new Date(rawFinalDate);
+    const finalDate =
+      rawFinalDate === undefined ? new Date() : new Date(rawFinalDate);
 
     if (
       !isValidDate(initialDate) ||
