@@ -2,14 +2,23 @@ const _ = require('lodash');
 
 module.exports = function $userController(expressify, userService) {
   return expressify({
+    ban,
     get,
     getAll,
     login,
     register,
     translateEmails,
     translateIds,
+    unban,
     update
   });
+
+  async function ban(req, res) {
+    const { userId } = req.params;
+    await userService.ban(userId);
+
+    return res.status(204).send();
+  }
 
   async function get(req, res) {
     const { userId } = req.params;
@@ -57,6 +66,13 @@ module.exports = function $userController(expressify, userService) {
     const names = await userService.translateIds(userIds);
 
     return res.status(200).json(names);
+  }
+
+  async function unban(req, res) {
+    const { userId } = req.params;
+    await userService.unban(userId);
+
+    return res.status(204).send();
   }
 
   async function update(req, res) {

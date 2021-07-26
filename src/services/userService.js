@@ -13,6 +13,7 @@ module.exports = function $userService(
   validationUtils
 ) {
   return {
+    ban,
     get,
     getAllBy,
     fbLogin,
@@ -20,8 +21,28 @@ module.exports = function $userService(
     register,
     translateEmails,
     translateIds,
+    unban,
     update
   };
+
+  async function ban(userId) {
+    await userRepository.update(
+      userId,
+      {
+        banned: true
+      },
+      {
+        banned: false
+      }
+    );
+
+    logger.info({
+      message: 'User banned',
+      user: {
+        id: userId
+      }
+    });
+  }
 
   async function get(userId) {
     const selectFields = [
@@ -44,20 +65,17 @@ module.exports = function $userService(
 
     if (!users.length) throw errors.create(404, 'User not found');
     const user = users[0];
+    const profile = userUtils.buildProfile(user);
 
     logger.info({
-      message: 'retrieved user',
-      user
+      message: 'User info retrieved',
+      user: {
+        ...profile,
+        id: userId
+      }
     });
 
-    const built = userUtils.buildProfile(user);
-
-    logger.info({
-      message: 'built profile',
-      built
-    });
-
-    return built;
+    return profile;
   }
 
   async function getAllBy(filters, limit, offset) {
@@ -70,7 +88,19 @@ module.exports = function $userService(
       'signupDate'
     ];
 
-    return userRepository.get({ filters, select: selectFields, limit, offset });
+    const result = await userRepository.get({
+      filters,
+      select: selectFields,
+      limit,
+      offset
+    });
+
+    logger.info({
+      message: 'User list retrieved',
+      length: result.length
+    });
+
+    return result;
   }
 
   async function fbLogin({ fbToken }) {
@@ -179,7 +209,15 @@ module.exports = function $userService(
       throw errors.create(404, 'Some user does not exist');
 
     // Flatten before return
-    return ids.map((idObject) => idObject.id);
+    const flatten = ids.map((idObject) => idObject.id);
+
+    logger.debug({
+      message: 'Emails translated to ids',
+      emails: userEmails,
+      ids: flatten
+    });
+
+    return flatten;
   }
 
   async function translateIds(userIds) {
@@ -198,7 +236,31 @@ module.exports = function $userService(
       };
     });
 
+    logger.debug({
+      message: 'Ids translated to names',
+      names
+    });
+
     return names;
+  }
+
+  async function unban(userId) {
+    await userRepository.update(
+      userId,
+      {
+        banned: false
+      },
+      {
+        banned: true
+      }
+    );
+
+    logger.info({
+      message: 'User unbanned',
+      user: {
+        id: userId
+      }
+    });
   }
 
   async function update(requester, { userId, updatedUserData }) {
@@ -207,6 +269,7 @@ module.exports = function $userService(
 
     const validFields = ['city', 'country', 'interests', 'profilePicUrl'];
     const parsedData = _.pick(updatedUserData, validFields);
+    validationUtils.validateUpdatedUserData(parsedData);
 
     if (_.isEmpty(parsedData))
       throw errors.create(
@@ -214,8 +277,14 @@ module.exports = function $userService(
         `At least should have one valid field. Valid fields: [${validFields}]`
       );
 
-    validationUtils.validateUpdatedUserData(updatedUserData);
+    await userRepository.update(userId, parsedData);
 
-    await userRepository.update(userId, updatedUserData);
+    logger.info({
+      message: 'User info updated',
+      user: {
+        id: userId,
+        ...parsedData
+      }
+    });
   }
 };

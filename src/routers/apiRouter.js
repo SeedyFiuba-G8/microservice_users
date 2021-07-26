@@ -28,6 +28,8 @@ module.exports = function apiRouter(
       .post('/users/session', userController.login)
       .get('/users/:userId', userController.get)
       .patch('/users/:userId', userController.update)
+      .post('/users/:userId/ban', userController.ban)
+      .delete('/users/:userId/ban', userController.unban)
 
       // Admins
       .post('/admins', adminController.register)

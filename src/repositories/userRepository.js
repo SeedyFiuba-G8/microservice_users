@@ -61,16 +61,14 @@ module.exports = function $userRepository(dbUtils, errors, logger, knex) {
       .select(['id', 'email', 'first_name', 'last_name']);
   }
 
-  async function update(userId, updatedUserData) {
-    const updateData = _.omitBy(
-      {
-        ..._.pick(updatedUserData, ['city', 'country', 'interests']),
-        profile_pic_url: updatedUserData.profilePicUrl
-      },
-      _.isUndefined
-    );
+  async function update(userId, updatedUserData, where) {
+    let query = knex('users')
+      .update(dbUtils.mapToDb(updatedUserData))
+      .where('id', userId);
 
-    if (!(await knex('users').update(updateData).where('id', userId)))
-      throw errors.create(404, 'User not found');
+    if (where) query = query.where(where);
+
+    const result = await query;
+    if (!result) throw errors.create(404, 'User not found');
   }
 };
