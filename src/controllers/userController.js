@@ -19,7 +19,8 @@ module.exports = function $userController(expressify, userService) {
   }
 
   async function getAll(req, res) {
-    const users = await userService.getAll();
+    const { filters, limit, offset } = parseFilters(req.query);
+    const users = await userService.getAllBy(filters, limit, offset);
 
     return res.status(200).json({ users });
   }
@@ -66,5 +67,22 @@ module.exports = function $userController(expressify, userService) {
     await userService.update(requester, { userId, updatedUserData });
 
     return res.status(200).send();
+  }
+
+  // Aux
+
+  /**
+   * Parse the filters and pick the valid ones
+   *
+   * @param {Object} filters
+   *
+   * @returns {Object}
+   */
+  function parseFilters(filters) {
+    return {
+      filters: _.pick(filters, ['firstName', 'lastName', 'banned']),
+      limit: _.get(filters, 'limit'),
+      offset: _.get(filters, 'offset')
+    };
   }
 };

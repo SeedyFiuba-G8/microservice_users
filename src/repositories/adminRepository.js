@@ -1,10 +1,18 @@
 const _ = require('lodash');
 
-module.exports = function $adminRepository(errors, logger, knex) {
+module.exports = function $adminRepository(dbUtils, errors, logger, knex) {
   return {
+    count,
     create,
     get
   };
+
+  function count({ filters = {} } = {}) {
+    return knex('admins')
+      .where(dbUtils.mapToDb(filters))
+      .count('id')
+      .then((result) => Number(result[0].count));
+  }
 
   function create({ id, email, password }) {
     return knex('admins')

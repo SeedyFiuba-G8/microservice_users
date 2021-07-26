@@ -39,12 +39,20 @@ function createContainer() {
     return dbComponents.dbService(knex, logger);
   });
 
+  container.register('dbUtils', function $dbService() {
+    return dbComponents.dbUtils();
+  });
+
   container.register('docsRouter', function $docsRouter() {
     return apiComponents.docsRouter(apiPath);
   });
 
   container.register('errors', function $errors() {
     return errorComponents.errors();
+  });
+
+  container.register('events', function $events(config) {
+    return config.events;
   });
 
   container.register('expressify', function $expressify() {

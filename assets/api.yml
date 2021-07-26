@@ -15,7 +15,7 @@ servers:
     description: 'Production'
   - url: https://sf-tdp2-users-dev.herokuapp.com/
     description: 'Staging'
-  - url: http://localhost:3000/
+  - url: http://localhost:3001/
     description: 'Local development'
 
 # =============================================================================
@@ -23,6 +23,7 @@ servers:
 tags:
   - name: Admins
   - name: Users
+  - name: Metrics
   - name: Status
 
 # =============================================================================
@@ -35,6 +36,37 @@ paths:
       description: Get info from every user.
       tags:
         - Users
+      parameters:
+        - in: query
+          name: firstName
+          required: false
+          schema:
+            type: string
+          description: First name of the user.
+        - in: query
+          name: lastName
+          required: false
+          schema:
+            type: string
+          description: Last name of the user.
+        - in: query
+          name: banned
+          required: false
+          schema:
+            type: boolean
+          description: User banned status.
+        - in: query
+          name: limit
+          required: false
+          schema:
+            type: integer
+          description: The number of users to be retrieved.
+        - in: query
+          name: offset
+          required: false
+          schema:
+            type: integer
+          description: The number of users we want to take as offset.
       responses:
         200:
           $ref: '#/components/responses/getAllUsers'
@@ -167,6 +199,44 @@ paths:
       responses:
         200:
           $ref: '#/components/responses/postEmailTranslation'
+        default:
+          $ref: '#/components/responses/Error'
+
+  # METRICS
+  /metrics:
+    get:
+      summary: Get basic metrics
+      description: Get metrics from users and admins.
+      tags:
+        - Metrics
+      responses:
+        200:
+          $ref: '#/components/responses/getBasicMetrics'
+        default:
+          $ref: '#/components/responses/Error'
+
+  /metrics/events:
+    get:
+      summary: Get event metrics
+      description: Get event metrics from users and admins.
+      tags:
+        - Metrics
+      parameters:
+        - in: query
+          name: initialDate
+          required: true
+          schema:
+            $ref: '#/components/schemas/Date'
+          description: Initial date to retrieve metrics.
+        - in: query
+          name: finalDate
+          required: false
+          schema:
+            $ref: '#/components/schemas/Date'
+          description: Final date to retrieve metrics.
+      responses:
+        200:
+          $ref: '#/components/responses/getEventMetrics'
         default:
           $ref: '#/components/responses/Error'
 
@@ -311,6 +381,21 @@ components:
             type: array
             items:
               $ref: '#/components/schemas/Id'
+
+    # METRICS
+    getBasicMetrics:
+      description: Metrics retrieved successfully.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BasicMetrics'
+
+    getEventMetrics:
+      description: Metrics retrieved successfully.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/EventMetrics'
 
     # STATUS
     health:
@@ -541,6 +626,88 @@ components:
             - email
             - firstName
             - lastName
+
+    # METRICS
+    UserQuantities:
+      type: object
+      properties:
+        native:
+          type: integer
+          example: 23
+        federate:
+          type: integer
+          example: 12
+      required:
+        - native
+        - federate
+
+    BasicMetrics:
+      type: object
+      properties:
+        admins:
+          type: object
+          properties:
+            total:
+              type: integer
+              example: 6045
+          required:
+            - total
+        users:
+          type: object
+          properties:
+            total:
+              type: integer
+              example: 6045
+            banned:
+              type: integer
+              example: 231
+          required:
+            - total
+            - banned
+      required:
+        - admins
+        - users
+
+    EventMetrics:
+      type: object
+      properties:
+        admins:
+          type: object
+          properties:
+            register:
+              type: integer
+              example: 2
+            login:
+              type: integer
+              example: 54
+            ban:
+              type: integer
+              example: 23
+            unban:
+              type: integer
+              example: 12
+          required:
+            - register
+            - login
+            - ban
+            - unban
+        users:
+          type: object
+          properties:
+            register:
+              $ref: '#/components/schemas/UserQuantities'
+            login:
+              $ref: '#/components/schemas/UserQuantities'
+            passwordRecovery:
+              type: integer
+              example: 6
+          required:
+            - register
+            - login
+            - passwordRecovery
+      required:
+        - admins
+        - users
 
     # COMMON
     LoginData:

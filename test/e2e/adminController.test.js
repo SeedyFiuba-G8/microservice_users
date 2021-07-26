@@ -7,6 +7,7 @@ const container = containerFactory.createContainer();
 describe('adminController', () => {
   let adminRepository;
   let errors;
+  let eventRepository;
   let request;
   let res;
 
@@ -15,7 +16,13 @@ describe('adminController', () => {
   beforeEach(() => {
     adminRepository = container.get('adminRepository');
     errors = container.get('errors');
+    eventRepository = container.get('eventRepository');
     request = supertest(container.get('app'));
+  });
+
+  beforeEach(() => {
+    // Mock values for events
+    jest.spyOn(eventRepository, 'log').mockImplementationOnce(() => {});
   });
 
   afterEach(() => {

@@ -47,6 +47,20 @@ module.exports = {
     host: '0.0.0.0',
     port: _.get(process.env, 'PORT', 3001)
   },
+  events: {
+    // Admins
+    ADMIN_REGISTER: 'Admin Register',
+    ADMIN_LOGIN: 'Admin Login',
+
+    // Users
+    NATIVE_USER_REGISTER: 'Native User Register',
+    FEDERATE_USER_REGISTER: 'Federate User Register',
+    NATIVE_USER_LOGIN: 'Native User Login',
+    FEDERATE_USER_LOGIN: 'Federate User Login',
+    PASSWORD_RECOVERY: 'Password Recovery',
+    USER_BANNED: 'User Banned',
+    USER_UNBANNED: 'User Unbanned'
+  },
   gateways: {
     fb: {
       userByTokenBaseUrl:

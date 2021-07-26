@@ -1,13 +1,21 @@
 const _ = require('lodash');
 
-module.exports = function $userRepository(errors, logger, knex) {
+module.exports = function $userRepository(dbUtils, errors, logger, knex) {
   return {
+    count,
     create,
     get,
     translateEmails,
     translateIds,
     update
   };
+
+  function count({ filters = {} } = {}) {
+    return knex('users')
+      .where(dbUtils.mapToDb(filters))
+      .count('id')
+      .then((result) => Number(result[0].count));
+  }
 
   function create({ id, email, password, fbId, firstName, lastName }) {
     const userData = {
@@ -31,13 +39,16 @@ module.exports = function $userRepository(errors, logger, knex) {
       });
   }
 
-  function get(filters = {}) {
-    const parsedFilters = _.omitBy(
-      { id: filters.id, email: filters.email, fb_id: filters.fbId },
-      _.isUndefined
-    );
+  function get({ select, filters = {}, limit, offset } = {}) {
+    const query = knex('users')
+      .select(_.isArray(select) ? dbUtils.mapToDb(select) : '*')
+      .where(dbUtils.mapToDb(filters))
+      .orderBy('signup_date', 'desc');
 
-    return knex('users').where(parsedFilters).select('*');
+    if (limit) query.limit(limit);
+    if (offset) query.offset(offset);
+
+    return query.then(dbUtils.mapFromDb);
   }
 
   function translateEmails(userEmails) {
