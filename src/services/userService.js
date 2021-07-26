@@ -4,6 +4,8 @@ const { v4: uuidv4 } = require('uuid');
 module.exports = function $userService(
   bcrypt,
   errors,
+  events,
+  eventRepository,
   fbGateway,
   logger,
   userRepository,
@@ -85,11 +87,39 @@ module.exports = function $userService(
         lastName: fbUser.last_name
       });
 
+      eventRepository.log(events.FEDERATE_USER_REGISTER);
+      logger.info({
+        message: 'Federate user registered',
+        user: {
+          id: uuid,
+          email: fbUser.email,
+          firstName: fbUser.first_name,
+          lastName: fbUser.last_name
+        }
+      });
+
+      eventRepository.log(events.FEDERATE_USER_LOGIN);
+      logger.info({
+        message: 'Federate user logged in',
+        user: {
+          id: uuid,
+          email: fbUser.email,
+          firstName: fbUser.first_name,
+          lastName: fbUser.last_name
+        }
+      });
+
       return uuid;
     }
 
     const user = users[0];
     if (user.banned) throw errors.create(409, 'User is banned');
+
+    eventRepository.log(events.FEDERATE_USER_LOGIN);
+    logger.info({
+      message: 'Federate user logged in',
+      user: _.pick(user, ['id', 'email', 'firstName', 'lastName'])
+    });
 
     return user.id;
   }
@@ -107,6 +137,12 @@ module.exports = function $userService(
 
     if (user.banned) throw errors.create(409, 'User is banned');
 
+    eventRepository.log(events.NATIVE_USER_LOGIN);
+    logger.info({
+      message: 'Native user logged in',
+      user: _.pick(user, ['id', 'email', 'firstName', 'lastName'])
+    });
+
     return user.id;
   }
 
@@ -120,6 +156,15 @@ module.exports = function $userService(
       ...userData,
       id: uuid,
       password: encryptedPassword
+    });
+
+    eventRepository.log(events.NATIVE_USER_REGISTER);
+    logger.info({
+      message: 'Native user registered',
+      user: {
+        id: uuid,
+        ..._.pick(userData, ['email', 'firstName', 'lastName'])
+      }
     });
 
     return uuid;

@@ -1,7 +1,7 @@
 module.exports = function $metricService(
   adminRepository,
-  config,
   errors,
+  events,
   eventRepository,
   metricUtils,
   userRepository
@@ -32,7 +32,6 @@ module.exports = function $metricService(
   async function getEventsBetween(rawInitialDate, rawFinalDate) {
     const { initialDate, finalDate } = parseDates(rawInitialDate, rawFinalDate);
 
-    const { events } = config;
     const eventNames = [
       'ADMIN_REGISTER',
       'ADMIN_LOGIN',
