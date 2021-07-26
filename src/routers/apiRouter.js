@@ -3,6 +3,7 @@ const express = require('express');
 module.exports = function apiRouter(
   apiValidatorMiddleware,
   adminController,
+  metricController,
   statusController,
   userController
 ) {
@@ -31,6 +32,10 @@ module.exports = function apiRouter(
       // Admins
       .post('/admins', adminController.register)
       .post('/admins/session', adminController.login)
+
+      // Metrics
+      .get('/metrics', metricController.getBasic)
+      .get('/metrics/events', metricController.getEvents)
 
       // Translation
       .post('/idtranslation', userController.translateIds)
