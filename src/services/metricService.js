@@ -51,8 +51,8 @@ module.exports = function $metricService(
 
       // Users
       nativeUserRegisters,
+      federateUserRegisters,
       nativeUserLogins,
-      federateUserRegisers,
       federateUserLogins,
       passwordRecoveries,
       newBannedUsers,
@@ -73,7 +73,7 @@ module.exports = function $metricService(
       // Users
       nativeUserRegisters,
       nativeUserLogins,
-      federateUserRegisers,
+      federateUserRegisters,
       federateUserLogins,
       passwordRecoveries
     });

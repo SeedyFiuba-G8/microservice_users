@@ -24,7 +24,7 @@ module.exports = function $metricUtils() {
     // Users
     nativeUserRegisters,
     nativeUserLogins,
-    federateUserRegisers,
+    federateUserRegisters,
     federateUserLogins,
     passwordRecoveries,
     newBannedUsers,
@@ -40,7 +40,7 @@ module.exports = function $metricUtils() {
       users: {
         register: {
           native: nativeUserRegisters,
-          federate: federateUserRegisers
+          federate: federateUserRegisters
         },
         login: {
           native: nativeUserLogins,
