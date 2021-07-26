@@ -41,7 +41,6 @@ CREATE TABLE public.admins (
 
 CREATE TABLE public.events (
 	-- Name				Type
-	-- id    				SERIAL									PRIMARY KEY,
 	date				TIMESTAMP WITH TIME ZONE	NOT NULL	DEFAULT CURRENT_TIMESTAMP(2),
 	event				VARCHAR(20)					NOT NULL
 );
