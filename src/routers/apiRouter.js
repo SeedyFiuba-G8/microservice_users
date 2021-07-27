@@ -5,7 +5,8 @@ module.exports = function apiRouter(
   adminController,
   metricController,
   statusController,
-  userController
+  userController,
+  validateApikeyMiddleware
 ) {
   return (
     express
@@ -15,6 +16,7 @@ module.exports = function apiRouter(
 
       // OpenAPI Validation Middleware
       .use(apiValidatorMiddleware)
+      .use(validateApikeyMiddleware)
 
       // STATUS
       .get('/ping', statusController.ping)
