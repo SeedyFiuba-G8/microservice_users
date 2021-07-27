@@ -144,6 +144,43 @@ paths:
         default:
           $ref: '#/components/responses/Error'
 
+  /users/{userId}/ban:
+    post:
+      summary: Ban a user
+      description: Allow admins to ban users.
+      tags:
+        - Users
+      parameters:
+        - in: path
+          name: userId
+          schema:
+            $ref: '#/components/schemas/Id'
+          required: true
+          description: uuid of the user
+      responses:
+        204:
+          description: 'User banned successfully.'
+        default:
+          $ref: '#/components/responses/Error'
+
+    delete:
+      summary: Unban a user
+      description: Allow admins to unban users.
+      tags:
+        - Users
+      parameters:
+        - in: path
+          name: userId
+          schema:
+            $ref: '#/components/schemas/Id'
+          required: true
+          description: uuid of the user
+      responses:
+        204:
+          description: 'User unbanned successfully.'
+        default:
+          $ref: '#/components/responses/Error'
+
   # ADMINS
   /admins:
     post:
