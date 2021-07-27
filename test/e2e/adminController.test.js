@@ -6,18 +6,28 @@ const container = containerFactory.createContainer();
 
 describe('adminController', () => {
   let adminRepository;
+  let config;
   let errors;
   let eventRepository;
   let request;
   let res;
 
+  // API Keys
+  let fakeApikey;
+  let apikeyHeader;
+
   const spyAdminRepository = {};
 
   beforeEach(() => {
     adminRepository = container.get('adminRepository');
+    config = container.get('config');
     errors = container.get('errors');
     eventRepository = container.get('eventRepository');
     request = supertest(container.get('app'));
+
+    // API Keys
+    fakeApikey = 'fake-apikey';
+    apikeyHeader = config.services.apikeys.header;
   });
 
   beforeEach(() => {
@@ -43,13 +53,15 @@ describe('adminController', () => {
       });
 
       describe('when no body is provided', () => {
-        it('should fail with status 415', () => request.post(path).expect(415));
+        it('should fail with status 415', () =>
+          request.post(path).set(apikeyHeader, fakeApikey).expect(415));
       });
 
       describe('when body is invalid', () => {
         it('should fail with status 400', () =>
           request
             .post(path)
+            .set(apikeyHeader, fakeApikey)
             .send({
               faltan: 'cosas'
             })
@@ -65,7 +77,10 @@ describe('adminController', () => {
                 throw errors.create(409, 'Email already in use');
               });
 
-            res = await request.post(path).send(registerData);
+            res = await request
+              .post(path)
+              .set(apikeyHeader, fakeApikey)
+              .send(registerData);
           });
 
           it('should fail with status 409', () =>
@@ -85,7 +100,10 @@ describe('adminController', () => {
               .spyOn(adminRepository, 'create')
               .mockReturnValue(undefined);
 
-            res = await request.post(path).send(registerData);
+            res = await request
+              .post(path)
+              .set(apikeyHeader, fakeApikey)
+              .send(registerData);
           });
 
           it('should succeed with status 201', () =>
@@ -107,13 +125,15 @@ describe('adminController', () => {
 
     describe('POST', () => {
       describe('when no body is provided', () => {
-        it('should fail with status 415', () => request.post(path).expect(415));
+        it('should fail with status 415', () =>
+          request.post(path).set(apikeyHeader, fakeApikey).expect(415));
       });
 
       describe('when body is invalid', () => {
         it('should fail with status 400', () =>
           request
             .post(path)
+            .set(apikeyHeader, fakeApikey)
             .send({
               faltan: 'cosas'
             })
@@ -144,7 +164,10 @@ describe('adminController', () => {
               .spyOn(adminRepository, 'get')
               .mockReturnValue([]);
 
-            res = await request.post(path).send(loginData);
+            res = await request
+              .post(path)
+              .set(apikeyHeader, fakeApikey)
+              .send(loginData);
           });
 
           it('should fail with status 409', () =>
@@ -169,6 +192,7 @@ describe('adminController', () => {
             beforeEach(async () => {
               res = await request
                 .post(path)
+                .set(apikeyHeader, fakeApikey)
                 .send({ ...loginData, password: 'incorrect' });
             });
 
@@ -187,12 +211,16 @@ describe('adminController', () => {
             it('should respond with correct status and body', () =>
               request
                 .post(path)
+                .set(apikeyHeader, fakeApikey)
                 .send(loginData)
                 .expect('Content-Type', /json/)
                 .expect(200, { id: admin.id }));
 
             it('should have called adminRepository.get correctly', async () => {
-              await request.post(path).send(loginData);
+              await request
+                .post(path)
+                .set(apikeyHeader, fakeApikey)
+                .send(loginData);
 
               expect(spyAdminRepository.get).toHaveBeenCalledTimes(1);
               expect(spyAdminRepository.get).toHaveBeenCalledWith({

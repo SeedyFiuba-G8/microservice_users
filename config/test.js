@@ -8,5 +8,10 @@ module.exports = {
       enabled: false
     }
   },
-  monitoring: false
+  monitoring: false,
+  services: {
+    apikeys: {
+      baseUrl: 'http://apikeys-test/'
+    }
+  }
 };
