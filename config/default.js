@@ -61,6 +61,10 @@ module.exports = {
     USER_BANNED: 'User Banned',
     USER_UNBANNED: 'User Unbanned'
   },
+  fetch: {
+    forwardHeaders: [],
+    timeout: 300000 // ms
+  },
   gateways: {
     fb: {
       userByTokenBaseUrl:
