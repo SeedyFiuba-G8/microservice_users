@@ -112,6 +112,14 @@ function createContainer() {
     return loggingComponents.loggingMiddleware(logger);
   });
 
+  container.register('serviceInfo', function $serverInfo() {
+    return {
+      creationDate: new Date(),
+      description:
+        'Users microservice that manages users and admins accounts and sessions.'
+    };
+  });
+
   container.register('urlFactory', function $commonUrlFactory() {
     return gatewayComponents.urlFactory();
   });
