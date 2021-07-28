@@ -40,6 +40,23 @@ describe('statusController', () => {
     });
   });
 
+  describe('/info', () => {
+    const path = '/info';
+
+    describe('GET', () => {
+      it('should respond with the correct microservice info', () =>
+        request
+          .get(path)
+          .set(apikeyHeader, fakeApikey)
+          .expect('Content-Type', /json/)
+          .expect(200, {
+            creationDate: '2021-07-28T20:41:20.022Z',
+            description:
+              'Users microservice that manages users and admins accounts and sessions.'
+          }));
+    });
+  });
+
   describe('/health', () => {
     const path = '/health';
 
