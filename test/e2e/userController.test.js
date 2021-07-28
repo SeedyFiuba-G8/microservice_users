@@ -13,14 +13,14 @@ describe('userController', () => {
   let userNocks;
   let userRepository;
   let eventRepository;
+  let spyUserRepository;
 
   // API Keys
   let fakeApikey;
   let apikeyHeader;
 
-  const spyUserRepository = {};
-
   beforeEach(() => {
+    spyUserRepository = {};
     config = container.get('config');
     errors = container.get('errors');
     mockData = container.get('mockData');
