@@ -708,4 +708,222 @@ describe('userController', () => {
       });
     });
   });
+
+  describe('/users/:userId/ban', () => {
+    const pathForUserId = (userId) => `/users/${userId}/ban`;
+    const validUUID = '123e4567-e89b-12d3-a456-426614174000';
+    const path = pathForUserId(validUUID);
+
+    describe('POST', () => {
+      describe('when :userId param format is invalid', () => {
+        it('should fail with 400', () =>
+          request
+            .post(pathForUserId('invalidUUID'))
+            .set(apikeyHeader, fakeApikey)
+            .expect('Content-Type', /json/)
+            .expect(400));
+      });
+
+      describe('when :userId param is valid, and unbanned user exists', () => {
+        beforeEach(
+          () =>
+            (spyUserRepository.update = jest
+              .spyOn(userRepository, 'update')
+              .mockReturnValueOnce(undefined))
+        );
+
+        it('should respond with correct status (and empty body)', () => {
+          request
+            .post(path)
+            .set(apikeyHeader, fakeApikey)
+            .expect('Content-Type', /json/)
+            .expect(204, {});
+        });
+
+        it('should have called userRespository once with ban = True', async () => {
+          await request.post(path).set(apikeyHeader, fakeApikey);
+
+          expect(spyUserRepository.update).toHaveBeenCalledTimes(1);
+          expect(spyUserRepository.update).toHaveBeenCalledWith(
+            validUUID,
+            { banned: true },
+            { banned: false }
+          );
+        });
+      });
+    });
+
+    describe('DELETE', () => {
+      describe('when :userId para is valid, and banned user exists', () => {
+        beforeEach(
+          () =>
+            (spyUserRepository.update = jest
+              .spyOn(userRepository, 'update')
+              .mockReturnValueOnce(undefined))
+        );
+
+        it('should respond with correct status (and empty body)', () => {
+          request
+            .delete(path)
+            .set(apikeyHeader, fakeApikey)
+            .expect('Content-Type', /json/)
+            .expect(204, {});
+        });
+
+        it('should have called userRespository once with ban = True', async () => {
+          await request.delete(path).set(apikeyHeader, fakeApikey);
+
+          expect(spyUserRepository.update).toHaveBeenCalledTimes(1);
+          expect(spyUserRepository.update).toHaveBeenCalledWith(
+            validUUID,
+            { banned: false },
+            { banned: true }
+          );
+        });
+      });
+    });
+  });
+
+  describe('/idtranslation', () => {
+    const path = '/idtranslation';
+
+    describe('POST', () => {
+      describe('when no body is provided', () => {
+        it('should fail with status 415', () =>
+          request.post(path).set(apikeyHeader, fakeApikey).expect(415));
+      });
+
+      describe('when body is invalid', () => {
+        it('should fail with status 400', () =>
+          request
+            .post(path)
+            .set(apikeyHeader, fakeApikey)
+            .send(['hello', 'world'])
+            .expect(400));
+      });
+
+      describe('when body is valid, and one translation is requested', () => {
+        beforeEach(() => {
+          spyUserRepository.translateIds = jest
+            .spyOn(userRepository, 'translateIds')
+            .mockImplementationOnce((idsList) => {
+              if (idsList[0] === '123e4567-e89b-12d3-a456-426614174000') {
+                return [
+                  {
+                    id: '123e4567-e89b-12d3-a456-426614174000',
+                    email: 'mail@mail.org',
+                    first_name: 'FirstName',
+                    last_name: 'LastName'
+                  }
+                ];
+              }
+              return [];
+            });
+        });
+
+        describe('when requested UUID exists', () => {
+          it('should return with code 200 and that user´s information', () =>
+            request
+              .post(path)
+              .set(apikeyHeader, fakeApikey)
+              .send(['123e4567-e89b-12d3-a456-426614174000'])
+              .expect('Content-Type', /json/)
+              .expect(200, {
+                '123e4567-e89b-12d3-a456-426614174000': {
+                  email: 'mail@mail.org',
+                  firstName: 'FirstName',
+                  lastName: 'LastName'
+                }
+              }));
+
+          it('should have called usersRespository once', async () => {
+            await request
+              .post(path)
+              .set(apikeyHeader, fakeApikey)
+              .send(['123e4567-e89b-12d3-a456-000000000000']);
+
+            expect(spyUserRepository.translateIds).toHaveBeenCalledTimes(1);
+          });
+        });
+
+        describe('when requested UUID does not exist', () => {
+          it('should return with code 200 and an empty array', () => {
+            request
+              .post(path)
+              .set(apikeyHeader, fakeApikey)
+              .send(['123e4567-e89b-12d3-a456-000000000000'])
+              .expect('Content-Type', /json/)
+              .expect(200, {});
+          });
+
+          it('should have called usersRespository once', async () => {
+            await request
+              .post(path)
+              .set(apikeyHeader, fakeApikey)
+              .send(['123e4567-e89b-12d3-a456-000000000000']);
+
+            expect(spyUserRepository.translateIds).toHaveBeenCalledTimes(1);
+          });
+        });
+      });
+    });
+  });
+
+  describe('/emailtranslation', () => {
+    const path = '/emailtranslation';
+    const validemail = 'mail@mail.com';
+
+    describe('POST', () => {
+      beforeEach(() => {
+        spyUserRepository.translateEmails = jest
+          .spyOn(userRepository, 'translateEmails')
+          .mockImplementationOnce((idsList) => {
+            if (idsList[0] === validemail) {
+              return [{ id: '123e4567-e89b-12d3-a456-426614174000' }];
+            }
+            return [];
+          });
+      });
+
+      describe('when given email exists', () => {
+        it('should return with code 200 and one UUID', () => {
+          request
+            .post(path)
+            .set(apikeyHeader, fakeApikey)
+            .send([validemail])
+            .expect('Content-Type', /json/)
+            .expect(200, ['123e4567-e89b-12d3-a456-426614174000']);
+        });
+
+        it('should have called usersRespository once', async () => {
+          await request
+            .post(path)
+            .set(apikeyHeader, fakeApikey)
+            .send([validemail]);
+
+          expect(spyUserRepository.translateEmails).toHaveBeenCalledTimes(1);
+        });
+      });
+
+      describe('when given email doesn´t exist', () => {
+        it('should return with code 200 and an empty list', () => {
+          request
+            .post(path)
+            .set(apikeyHeader, fakeApikey)
+            .send(['some@invalid.email'])
+            .expect('Content-Type', /json/)
+            .expect(200, []);
+        });
+
+        it('should have called usersRespository once', async() => {
+          await request
+            .post(path)
+            .set(apikeyHeader, fakeApikey)
+            .send(['some@invalid.email']);
+
+          expect(spyUserRepository.translateEmails).toHaveBeenCalledTimes(1);
+        });
+      });
+    });
+  });
 });
