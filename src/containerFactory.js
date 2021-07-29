@@ -1,8 +1,10 @@
 const dependable = require('dependable');
 const path = require('path');
 const apiComponents = require('@seedyfiuba/api_components');
+const apikeysComponents = require('@seedyfiuba/apikeys_components');
 const dbComponents = require('@seedyfiuba/db_components');
 const errorComponents = require('@seedyfiuba/error_components');
+const gatewayComponents = require('@seedyfiuba/gateway_components');
 const loggingComponents = require('@seedyfiuba/logging_components');
 
 function createContainer() {
@@ -23,6 +25,31 @@ function createContainer() {
     'apiValidatorMiddleware',
     function $apiValidatorMiddleware() {
       return apiComponents.apiValidatorMiddleware(apiPath);
+    }
+  );
+
+  container.register('apikeysCache', function $apikeysCache() {
+    return apikeysComponents.cache();
+  });
+
+  container.register(
+    'validateApikeyMiddleware',
+    function $validateApikeyMiddleware(
+      apikeysCache,
+      config,
+      errors,
+      fetch,
+      logger,
+      urlFactory
+    ) {
+      return apikeysComponents.middleware(
+        apikeysCache,
+        config,
+        errors,
+        fetch,
+        logger,
+        urlFactory
+      );
     }
   );
 
@@ -69,6 +96,10 @@ function createContainer() {
     }
   );
 
+  container.register('fetch', function $commonFetch(config, errors, logger) {
+    return gatewayComponents.fetch(config, errors, logger);
+  });
+
   container.register('knex', function $knex(config) {
     return dbComponents.knex(config.knex);
   });
@@ -79,6 +110,18 @@ function createContainer() {
 
   container.register('loggingMiddleware', function $loggingMiddleware(logger) {
     return loggingComponents.loggingMiddleware(logger);
+  });
+
+  container.register('serviceInfo', function $serverInfo() {
+    return {
+      creationDate: new Date(),
+      description:
+        'Users microservice that manages users and admins accounts and sessions.'
+    };
+  });
+
+  container.register('urlFactory', function $commonUrlFactory() {
+    return gatewayComponents.urlFactory();
   });
 
   entries.forEach((entry) => container.load(path.join(__dirname, entry)));

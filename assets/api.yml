@@ -28,6 +28,11 @@ tags:
 
 # =============================================================================
 
+security:
+  - ApiKeyAuth: []
+
+# =============================================================================
+
 paths:
   # USERS
   /users:
@@ -278,6 +283,16 @@ paths:
           $ref: '#/components/responses/Error'
 
   # STATUS
+  /info:
+    get:
+      tags:
+        - Status
+      responses:
+        200:
+          $ref: '#/components/responses/info'
+        default:
+          $ref: '#/components/responses/Error'
+
   /ping:
     get:
       tags:
@@ -301,6 +316,13 @@ paths:
 # =============================================================================
 
 components:
+  # ---------------------------------------------------------------------------
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-api-key
+
   # ---------------------------------------------------------------------------
   requestBodies:
     # USERS
@@ -435,6 +457,13 @@ components:
             $ref: '#/components/schemas/EventMetrics'
 
     # STATUS
+    info:
+      description: Microservice general info reported.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Info'
+
     health:
       description: Microservice general health state reported.
       content:
@@ -768,6 +797,18 @@ components:
         - id
 
     # STATUS
+    Info:
+      type: object
+      properties:
+        creationDate:
+          $ref: '#/components/schemas/Date'
+        description:
+          type: string
+          example: 'Service description!'
+      required:
+        - creationDate
+        - description
+
     Ping:
       type: object
       properties:

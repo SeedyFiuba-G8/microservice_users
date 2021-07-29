@@ -61,6 +61,10 @@ module.exports = {
     USER_BANNED: 'User Banned',
     USER_UNBANNED: 'User Unbanned'
   },
+  fetch: {
+    forwardHeaders: [],
+    timeout: 300000 // ms
+  },
   gateways: {
     fb: {
       userByTokenBaseUrl:
@@ -87,5 +91,15 @@ module.exports = {
       ssl: true
     }
   },
-  monitoring: true
+  monitoring: true,
+  services: {
+    apikeys: {
+      header: 'x-api-key',
+      baseUrl: 'https://sf-tdp2-apikeys-main.herokuapp.com/',
+      key: {
+        name: 'apikeys-validation-key',
+        value: _.get(process.env, 'APIKEYS_KEY', 'SeedyFiubaUsers')
+      }
+    }
+  }
 };

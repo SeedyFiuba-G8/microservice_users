@@ -4,13 +4,23 @@ const containerFactory = require('../testContainerFactory');
 const container = containerFactory.createContainer();
 
 describe('statusController', () => {
+  let config;
   let dbService;
   let request;
   let res;
 
+  // API Keys
+  let fakeApikey;
+  let apikeyHeader;
+
   beforeEach(() => {
+    config = container.get('config');
     dbService = container.get('dbService');
     request = supertest(container.get('app'));
+
+    // API Keys
+    fakeApikey = 'fake-apikey';
+    apikeyHeader = config.services.apikeys.header;
   });
 
   afterEach(() => {
@@ -24,8 +34,26 @@ describe('statusController', () => {
       it('should respond with correct status and body', () =>
         request
           .get(path)
+          .set(apikeyHeader, fakeApikey)
           .expect('Content-Type', /json/)
           .expect(200, { status: 'ok' }));
+    });
+  });
+
+  describe('/info', () => {
+    const path = '/info';
+
+    describe('GET', () => {
+      it('should respond with the correct microservice info', () =>
+        request
+          .get(path)
+          .set(apikeyHeader, fakeApikey)
+          .expect('Content-Type', /json/)
+          .expect(200, {
+            creationDate: '2021-07-28T20:41:20.022Z',
+            description:
+              'Users microservice that manages users and admins accounts and sessions.'
+          }));
     });
   });
 
@@ -41,7 +69,7 @@ describe('statusController', () => {
             .spyOn(dbService, 'getDatabaseHealth')
             .mockReturnValue(true);
 
-          res = await request.get(path);
+          res = await request.get(path).set(apikeyHeader, fakeApikey);
         });
 
         it('should respond with correct status and body', () => {
@@ -60,7 +88,7 @@ describe('statusController', () => {
             .spyOn(dbService, 'getDatabaseHealth')
             .mockReturnValue(false);
 
-          res = await request.get(path);
+          res = await request.get(path).set(apikeyHeader, fakeApikey);
         });
 
         it('should respond with correct status and body', () => {

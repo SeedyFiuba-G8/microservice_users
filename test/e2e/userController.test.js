@@ -5,6 +5,7 @@ const containerFactory = require('../testContainerFactory');
 const container = containerFactory.createContainer();
 
 describe('userController', () => {
+  let config;
   let errors;
   let mockData;
   let request;
@@ -12,16 +13,25 @@ describe('userController', () => {
   let userNocks;
   let userRepository;
   let eventRepository;
+  let spyUserRepository;
 
-  const spyUserRepository = {};
+  // API Keys
+  let fakeApikey;
+  let apikeyHeader;
 
   beforeEach(() => {
+    spyUserRepository = {};
+    config = container.get('config');
     errors = container.get('errors');
     mockData = container.get('mockData');
     userNocks = container.get('userNocks');
     userRepository = container.get('userRepository');
     eventRepository = container.get('eventRepository');
     request = supertest(container.get('app'));
+
+    // API Keys
+    fakeApikey = 'fake-apikey';
+    apikeyHeader = config.services.apikeys.header;
   });
 
   beforeEach(() => {
@@ -43,7 +53,7 @@ describe('userController', () => {
             .spyOn(userRepository, 'get')
             .mockReturnValueOnce(mockData.users);
 
-          res = await request.get(path);
+          res = await request.get(path).set(apikeyHeader, fakeApikey);
         });
 
         it('should respond with correct status and body', () => {
@@ -76,7 +86,7 @@ describe('userController', () => {
             .spyOn(userRepository, 'get')
             .mockReturnValueOnce([]);
 
-          res = await request.get(path);
+          res = await request.get(path).set(apikeyHeader, fakeApikey);
         });
 
         it('should respond with correct status and body', () => {
@@ -117,13 +127,15 @@ describe('userController', () => {
       });
 
       describe('when no body is provided', () => {
-        it('should fail with status 415', () => request.post(path).expect(415));
+        it('should fail with status 415', () =>
+          request.post(path).set(apikeyHeader, fakeApikey).expect(415));
       });
 
       describe('when body is invalid', () => {
         it('should fail with status 400', () =>
           request
             .post(path)
+            .set(apikeyHeader, fakeApikey)
             .send({
               faltan: 'cosas'
             })
@@ -139,7 +151,10 @@ describe('userController', () => {
                 throw errors.create(409, 'Email already in use');
               });
 
-            res = await request.post(path).send(registerData);
+            res = await request
+              .post(path)
+              .set(apikeyHeader, fakeApikey)
+              .send(registerData);
           });
 
           it('should fail with status 409', () =>
@@ -159,7 +174,10 @@ describe('userController', () => {
               .spyOn(userRepository, 'create')
               .mockReturnValueOnce(undefined);
 
-            res = await request.post(path).send(registerData);
+            res = await request
+              .post(path)
+              .set(apikeyHeader, fakeApikey)
+              .send(registerData);
           });
 
           it('should succeed with status 201', () =>
@@ -184,13 +202,15 @@ describe('userController', () => {
       let user;
 
       describe('when no body is provided', () => {
-        it('should fail with status 415', () => request.post(path).expect(415));
+        it('should fail with status 415', () =>
+          request.post(path).set(apikeyHeader, fakeApikey).expect(415));
       });
 
       describe('when body is invalid', () => {
         it('should fail with status 400', () =>
           request
             .post(path)
+            .set(apikeyHeader, fakeApikey)
             .send({
               faltan: 'cosas'
             })
@@ -219,7 +239,10 @@ describe('userController', () => {
               .spyOn(userRepository, 'get')
               .mockReturnValueOnce([]);
 
-            res = await request.post(path).send(loginData);
+            res = await request
+              .post(path)
+              .set(apikeyHeader, fakeApikey)
+              .send(loginData);
           });
 
           it('should fail with status 409', () =>
@@ -244,6 +267,7 @@ describe('userController', () => {
 
               res = await request
                 .post(path)
+                .set(apikeyHeader, fakeApikey)
                 .send({ ...loginData, password: 'incorrect' });
             });
 
@@ -267,7 +291,10 @@ describe('userController', () => {
                   .spyOn(userRepository, 'get')
                   .mockReturnValueOnce([{ ...user, banned: true }]);
 
-                res = await request.post(path).send(loginData);
+                res = await request
+                  .post(path)
+                  .set(apikeyHeader, fakeApikey)
+                  .send(loginData);
               });
 
               it('should fail with status 409', () =>
@@ -293,12 +320,16 @@ describe('userController', () => {
               it('should respond with correct status and body', () =>
                 request
                   .post(path)
+                  .set(apikeyHeader, fakeApikey)
                   .send(loginData)
                   .expect('Content-Type', /json/)
                   .expect(200, { id: user.id }));
 
               it('should have called userRepository.get correctly', async () => {
-                await request.post(path).send(loginData);
+                await request
+                  .post(path)
+                  .set(apikeyHeader, fakeApikey)
+                  .send(loginData);
 
                 expect(spyUserRepository.get).toHaveBeenCalledTimes(1);
                 expect(spyUserRepository.get).toHaveBeenCalledWith({
@@ -348,7 +379,10 @@ describe('userController', () => {
               .spyOn(userRepository, 'create')
               .mockReturnValueOnce(undefined);
 
-            res = await request.post(path).send(loginData);
+            res = await request
+              .post(path)
+              .set(apikeyHeader, fakeApikey)
+              .send(loginData);
           });
 
           it('should respond with correct status and body', () => {
@@ -386,7 +420,10 @@ describe('userController', () => {
                 .spyOn(userRepository, 'get')
                 .mockReturnValueOnce([{ ...user, banned: true }]);
 
-              res = await request.post(path).send(loginData);
+              res = await request
+                .post(path)
+                .set(apikeyHeader, fakeApikey)
+                .send(loginData);
             });
 
             it('should fail with status 409', () =>
@@ -412,12 +449,16 @@ describe('userController', () => {
             it('should respond with correct status and body', () =>
               request
                 .post(path)
+                .set(apikeyHeader, fakeApikey)
                 .send(loginData)
                 .expect('Content-Type', /json/)
                 .expect(200, { id: user.id }));
 
             it('should have called userRepository.get correctly', async () => {
-              await request.post(path).send(loginData);
+              await request
+                .post(path)
+                .set(apikeyHeader, fakeApikey)
+                .send(loginData);
 
               expect(spyUserRepository.get).toHaveBeenCalledTimes(1);
               expect(spyUserRepository.get).toHaveBeenCalledWith({
@@ -442,6 +483,7 @@ describe('userController', () => {
         it('should fail with 400', () =>
           request
             .get(pathForUserId('invalidUUID'))
+            .set(apikeyHeader, fakeApikey)
             .expect('Content-Type', /json/)
             .expect(400));
       });
@@ -456,10 +498,14 @@ describe('userController', () => {
           );
 
           it('should fail with 404', () =>
-            request.get(path).expect('Content-Type', /json/).expect(404));
+            request
+              .get(path)
+              .set(apikeyHeader, fakeApikey)
+              .expect('Content-Type', /json/)
+              .expect(404));
 
           it('should have called userRepository once', async () => {
-            await request.get(path);
+            await request.get(path).set(apikeyHeader, fakeApikey);
 
             expect(spyUserRepository.get).toHaveBeenCalledTimes(1);
             expect(spyUserRepository.get).toHaveBeenCalledWith({
@@ -506,11 +552,12 @@ describe('userController', () => {
           it('should respond with correct status and body', () =>
             request
               .get(path)
+              .set(apikeyHeader, fakeApikey)
               .expect('Content-Type', /json/)
               .expect(200, profile));
 
           it('should have called userRepository once', async () => {
-            await request.get(path);
+            await request.get(path).set(apikeyHeader, fakeApikey);
 
             expect(spyUserRepository.get).toHaveBeenCalledTimes(1);
             expect(spyUserRepository.get).toHaveBeenCalledWith({
@@ -538,6 +585,7 @@ describe('userController', () => {
         it('should fail with 400', () =>
           request
             .patch(pathForUserId('invalidUUID'))
+            .set(apikeyHeader, fakeApikey)
             .set('uid', validUUID)
             .send({ country: 'Argentina' })
             .expect('Content-Type', /json/)
@@ -546,13 +594,19 @@ describe('userController', () => {
 
       describe('when no body is provided', () => {
         it('should fail with status 415', () =>
-          request.patch(path).set('uid', validUUID).send().expect(415));
+          request
+            .patch(path)
+            .set(apikeyHeader, fakeApikey)
+            .set('uid', validUUID)
+            .send()
+            .expect(415));
       });
 
       describe('when body is invalid', () => {
         it('should fail with status 400', () =>
           request
             .patch(path)
+            .set(apikeyHeader, fakeApikey)
             .set('uid', validUUID)
             .send({
               faltan: 'cosas'
@@ -562,7 +616,11 @@ describe('userController', () => {
 
       describe('when no uid header is provided', () => {
         it('should fail with status 400', () =>
-          request.patch(path).send({ country: 'Argentina' }).expect(400));
+          request
+            .patch(path)
+            .set(apikeyHeader, fakeApikey)
+            .send({ country: 'Argentina' })
+            .expect(400));
       });
 
       describe('when request is valid', () => {
@@ -578,6 +636,7 @@ describe('userController', () => {
           it('should fail with status 403', () =>
             request
               .patch(path)
+              .set(apikeyHeader, fakeApikey)
               .set('uid', validUUID.replace('1', '3'))
               .send(body)
               .expect(403));
@@ -594,10 +653,19 @@ describe('userController', () => {
           );
 
           it('should fail with 404', () =>
-            request.patch(path).set('uid', validUUID).send(body).expect(404));
+            request
+              .patch(path)
+              .set(apikeyHeader, fakeApikey)
+              .set('uid', validUUID)
+              .send(body)
+              .expect(404));
 
           it('should have called userRepository once', async () => {
-            await request.patch(path).set('uid', validUUID).send(body);
+            await request
+              .patch(path)
+              .set(apikeyHeader, fakeApikey)
+              .set('uid', validUUID)
+              .send(body);
 
             expect(spyUserRepository.update).toHaveBeenCalledTimes(1);
             expect(spyUserRepository.update).toHaveBeenCalledWith(
@@ -616,10 +684,19 @@ describe('userController', () => {
           );
 
           it('should respond with correct status and body', () =>
-            request.patch(path).set('uid', validUUID).send(body).expect(200));
+            request
+              .patch(path)
+              .set(apikeyHeader, fakeApikey)
+              .set('uid', validUUID)
+              .send(body)
+              .expect(200));
 
           it('should have called userRepository once', async () => {
-            await request.patch(path).set('uid', validUUID).send(body);
+            await request
+              .patch(path)
+              .set(apikeyHeader, fakeApikey)
+              .set('uid', validUUID)
+              .send(body);
 
             expect(spyUserRepository.update).toHaveBeenCalledTimes(1);
             expect(spyUserRepository.update).toHaveBeenCalledWith(
@@ -627,6 +704,217 @@ describe('userController', () => {
               body
             );
           });
+        });
+      });
+    });
+  });
+
+  describe('/users/:userId/ban', () => {
+    const pathForUserId = (userId) => `/users/${userId}/ban`;
+    const validUUID = '123e4567-e89b-12d3-a456-426614174000';
+    const path = pathForUserId(validUUID);
+
+    describe('POST', () => {
+      describe('when :userId param format is invalid', () => {
+        it('should fail with 400', () =>
+          request
+            .post(pathForUserId('invalidUUID'))
+            .set(apikeyHeader, fakeApikey)
+            .expect('Content-Type', /json/)
+            .expect(400));
+      });
+
+      describe('when :userId param is valid, and unbanned user exists', () => {
+        beforeEach(
+          () =>
+            (spyUserRepository.update = jest
+              .spyOn(userRepository, 'update')
+              .mockReturnValueOnce(undefined))
+        );
+
+        it('should respond with correct status (and empty body)', () =>
+          request
+            .post(path)
+            .set(apikeyHeader, fakeApikey)
+            .expect(204, {}));
+
+        it('should have called userRespository once with ban = True', async () => {
+          await request.post(path).set(apikeyHeader, fakeApikey);
+
+          expect(spyUserRepository.update).toHaveBeenCalledTimes(1);
+          expect(spyUserRepository.update).toHaveBeenCalledWith(
+            validUUID,
+            { banned: true },
+            { banned: false }
+          );
+        });
+      });
+    });
+
+    describe('DELETE', () => {
+      describe('when :userId para is valid, and banned user exists', () => {
+        beforeEach(
+          () =>
+            (spyUserRepository.update = jest
+              .spyOn(userRepository, 'update')
+              .mockReturnValueOnce(undefined))
+        );
+
+        it('should respond with correct status (and empty body)', () =>
+          request
+            .delete(path)
+            .set(apikeyHeader, fakeApikey)
+            .expect(204, {}));
+
+        it('should have called userRespository once with ban = True', async () => {
+          await request.delete(path).set(apikeyHeader, fakeApikey);
+
+          expect(spyUserRepository.update).toHaveBeenCalledTimes(1);
+          expect(spyUserRepository.update).toHaveBeenCalledWith(
+            validUUID,
+            { banned: false },
+            { banned: true }
+          );
+        });
+      });
+    });
+  });
+
+  describe('/idtranslation', () => {
+    const path = '/idtranslation';
+
+    describe('POST', () => {
+      describe('when no body is provided', () => {
+        it('should fail with status 415', () =>
+          request.post(path).set(apikeyHeader, fakeApikey).expect(415));
+      });
+
+      describe('when body is invalid', () => {
+        it('should fail with status 400', () =>
+          request
+            .post(path)
+            .set(apikeyHeader, fakeApikey)
+            .send(['hello', 'world'])
+            .expect(400));
+      });
+
+      describe('when body is valid, and one translation is requested', () => {
+        beforeEach(() => {
+          spyUserRepository.translateIds = jest
+            .spyOn(userRepository, 'translateIds')
+            .mockImplementationOnce((idsList) => {
+              if (idsList[0] === '123e4567-e89b-12d3-a456-426614174000') {
+                return [
+                  {
+                    id: '123e4567-e89b-12d3-a456-426614174000',
+                    email: 'mail@mail.org',
+                    first_name: 'FirstName',
+                    last_name: 'LastName'
+                  }
+                ];
+              }
+              return [];
+            });
+        });
+
+        describe('when requested UUID exists', () => {
+          it('should return with code 200 and that user´s information', () =>
+            request
+              .post(path)
+              .set(apikeyHeader, fakeApikey)
+              .send(['123e4567-e89b-12d3-a456-426614174000'])
+              .expect('Content-Type', /json/)
+              .expect(200, {
+                '123e4567-e89b-12d3-a456-426614174000': {
+                  email: 'mail@mail.org',
+                  firstName: 'FirstName',
+                  lastName: 'LastName'
+                }
+              }));
+
+          it('should have called usersRespository once', async () => {
+            await request
+              .post(path)
+              .set(apikeyHeader, fakeApikey)
+              .send(['123e4567-e89b-12d3-a456-000000000000']);
+
+            expect(spyUserRepository.translateIds).toHaveBeenCalledTimes(1);
+          });
+        });
+
+        describe('when requested UUID does not exist', () => {
+          it('should return with error code 404', () =>
+            request
+              .post(path)
+              .set(apikeyHeader, fakeApikey)
+              .send(['123e4567-e89b-12d3-a456-000000000000'])
+              .expect('Content-Type', /json/)
+              .expect(404));
+
+          it('should have called usersRespository once', async () => {
+            await request
+              .post(path)
+              .set(apikeyHeader, fakeApikey)
+              .send(['123e4567-e89b-12d3-a456-000000000000']);
+
+            expect(spyUserRepository.translateIds).toHaveBeenCalledTimes(1);
+          });
+        });
+      });
+    });
+  });
+
+  describe('/emailtranslation', () => {
+    const path = '/emailtranslation';
+    const validemail = 'mail@mail.com';
+
+    describe('POST', () => {
+      beforeEach(() => {
+        spyUserRepository.translateEmails = jest
+          .spyOn(userRepository, 'translateEmails')
+          .mockImplementationOnce((idsList) => {
+            if (idsList[0] === validemail) {
+              return [{ id: '123e4567-e89b-12d3-a456-426614174000' }];
+            }
+            return [];
+          });
+      });
+
+      describe('when given email exists', () => {
+        it('should return with code 200 and one UUID', () =>
+          request
+            .post(path)
+            .set(apikeyHeader, fakeApikey)
+            .send([validemail])
+            .expect('Content-Type', /json/)
+            .expect(200, ['123e4567-e89b-12d3-a456-426614174000']));
+
+        it('should have called usersRespository once', async () => {
+          await request
+            .post(path)
+            .set(apikeyHeader, fakeApikey)
+            .send([validemail]);
+
+          expect(spyUserRepository.translateEmails).toHaveBeenCalledTimes(1);
+        });
+      });
+
+      describe('when given email doesn´t exist', () => {
+        it('should return with error code 404', () =>
+          request
+            .post(path)
+            .set(apikeyHeader, fakeApikey)
+            .send(['some@invalid.email'])
+            .expect('Content-Type', /json/)
+            .expect(404));
+
+        it('should have called usersRespository once', async () => {
+          await request
+            .post(path)
+            .set(apikeyHeader, fakeApikey)
+            .send(['some@invalid.email']);
+
+          expect(spyUserRepository.translateEmails).toHaveBeenCalledTimes(1);
         });
       });
     });
