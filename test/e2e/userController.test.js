@@ -732,13 +732,11 @@ describe('userController', () => {
               .mockReturnValueOnce(undefined))
         );
 
-        it('should respond with correct status (and empty body)', () => {
+        it('should respond with correct status (and empty body)', () =>
           request
             .post(path)
             .set(apikeyHeader, fakeApikey)
-            .expect('Content-Type', /json/)
-            .expect(204, {});
-        });
+            .expect(204, {}));
 
         it('should have called userRespository once with ban = True', async () => {
           await request.post(path).set(apikeyHeader, fakeApikey);
@@ -762,13 +760,11 @@ describe('userController', () => {
               .mockReturnValueOnce(undefined))
         );
 
-        it('should respond with correct status (and empty body)', () => {
+        it('should respond with correct status (and empty body)', () =>
           request
             .delete(path)
             .set(apikeyHeader, fakeApikey)
-            .expect('Content-Type', /json/)
-            .expect(204, {});
-        });
+            .expect(204, {}));
 
         it('should have called userRespository once with ban = True', async () => {
           await request.delete(path).set(apikeyHeader, fakeApikey);
@@ -847,14 +843,13 @@ describe('userController', () => {
         });
 
         describe('when requested UUID does not exist', () => {
-          it('should return with code 200 and an empty array', () => {
+          it('should return with error code 404', () =>
             request
               .post(path)
               .set(apikeyHeader, fakeApikey)
               .send(['123e4567-e89b-12d3-a456-000000000000'])
               .expect('Content-Type', /json/)
-              .expect(200, {});
-          });
+              .expect(404));
 
           it('should have called usersRespository once', async () => {
             await request
@@ -886,14 +881,13 @@ describe('userController', () => {
       });
 
       describe('when given email exists', () => {
-        it('should return with code 200 and one UUID', () => {
+        it('should return with code 200 and one UUID', () =>
           request
             .post(path)
             .set(apikeyHeader, fakeApikey)
             .send([validemail])
             .expect('Content-Type', /json/)
-            .expect(200, ['123e4567-e89b-12d3-a456-426614174000']);
-        });
+            .expect(200, ['123e4567-e89b-12d3-a456-426614174000']));
 
         it('should have called usersRespository once', async () => {
           await request
@@ -906,16 +900,15 @@ describe('userController', () => {
       });
 
       describe('when given email doesn´t exist', () => {
-        it('should return with code 200 and an empty list', () => {
+        it('should return with error code 404', () =>
           request
             .post(path)
             .set(apikeyHeader, fakeApikey)
             .send(['some@invalid.email'])
             .expect('Content-Type', /json/)
-            .expect(200, []);
-        });
+            .expect(404));
 
-        it('should have called usersRespository once', async() => {
+        it('should have called usersRespository once', async () => {
           await request
             .post(path)
             .set(apikeyHeader, fakeApikey)

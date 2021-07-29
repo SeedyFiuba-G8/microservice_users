@@ -3,7 +3,7 @@ const containerFactory = require('../testContainerFactory');
 
 const container = containerFactory.createContainer();
 
-describe('userController', () => {
+describe('metricsController', () => {
   let config;
   let request;
   let adminRepository;
@@ -43,41 +43,41 @@ describe('userController', () => {
 
   describe('/metrics', () => {
     const path = '/metrics';
+    const values = {
+      admins: {
+        total: 5
+      },
+      users: {
+        total: 400,
+        banned: 50
+      }
+    };
 
     describe('GET', () => {
       describe('when get metrics is called', () => {
         beforeEach(() => {
           spyUserRepository.count = jest
             .spyOn(userRepository, 'count')
-            .mockImplementation(({ filter }) => {
-              if (!filter) return 450;
-              return 100;
+            .mockImplementation(({ filters = {} } = {}) => {
+              if (filters && filters.banned) return values.users.banned;
+              return values.users.total;
             });
           spyAdminRepository.count = jest
             .spyOn(adminRepository, 'count')
-            .mockReturnValueOnce(5);
+            .mockImplementationOnce(() => values.admins.total);
         });
 
-        it('returns expected status 200 and metrics body', () => {
+        it('returns expected status 200 and metrics body', () =>
           request
             .get(path)
             .set(apikeyHeader, fakeApikey)
             .expect('Content-Type', /json/)
-            .expect(200, {
-              admins: {
-                total: 5
-              },
-              users: {
-                total: 450,
-                banned: 100
-              }
-            });
-        });
+            .expect(200, values));
 
-        it('should have called userRepository and adminRepository once (each)', async () => {
+        it('should have called userRepository.count and adminRepository.count once (each)', async () => {
           await request.get(path).set(apikeyHeader, fakeApikey);
 
-          expect(spyUserRepository.count).toHaveBeenCalledTimes(1);
+          expect(spyUserRepository.count).toHaveBeenCalledTimes(2);
           expect(spyAdminRepository.count).toHaveBeenCalledTimes(1);
         });
       });
@@ -89,7 +89,7 @@ describe('userController', () => {
 
     describe('GET', () => {
       describe('when query params are invalid (not date-time)', () => {
-        it('should return error code 400', () => {
+        it('should return error code 400', () =>
           request
             .get(path)
             .set(apikeyHeader, fakeApikey)
@@ -98,12 +98,11 @@ describe('userController', () => {
               finalDate: 'anotherInvalidDate'
             })
             .expect('Content-Type', /json/)
-            .expect(400);
-        });
+            .expect(400));
       });
 
       describe('when date values are invalid', () => {
-        it('should return error code 400', () => {
+        it('should return error code 400', () =>
           request
             .get(path)
             .set(apikeyHeader, fakeApikey)
@@ -112,8 +111,7 @@ describe('userController', () => {
               finalDate: '2040-06-13T21:29:29.330Z'
             })
             .expect('Content-Type', /json/)
-            .expect(400);
-        });
+            .expect(400));
       });
 
       describe('when dates values are valid', () => {
@@ -122,12 +120,12 @@ describe('userController', () => {
 
         beforeEach(() => {
           const eventValues = 10;
-          spyEventRepository = jest
+          spyEventRepository.count = jest
             .spyOn(eventRepository, 'count')
             .mockReturnValue(eventValues);
         });
 
-        it('should return code 200 and 10 for every value', () => {
+        it('should return code 200 and 10 for every value', () =>
           request
             .get(path)
             .set(apikeyHeader, fakeApikey)
@@ -154,16 +152,15 @@ describe('userController', () => {
                 },
                 passwordRecovery: 10
               }
-            });
-        });
+            }));
 
-        it('should have called eventRepository events.lenght times', async () => {
+        it('should have called eventRepository.count events.lenght times', async () => {
           await request.get(path).set(apikeyHeader, fakeApikey).query({
             initialDate: validInitialDate,
             finalDate: validFinalDate
           });
 
-          expect(spyEventRepository).toHaveBeenCalledTimes(
+          expect(spyEventRepository.count).toHaveBeenCalledTimes(
             Object.keys(config.events).length
           );
         });
