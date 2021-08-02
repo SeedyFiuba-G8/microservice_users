@@ -94,6 +94,7 @@ module.exports = {
   monitoring: true,
   services: {
     apikeys: {
+      enabled: true,
       header: 'x-api-key',
       baseUrl: 'https://sf-tdp2-apikeys-main.herokuapp.com/',
       key: {
