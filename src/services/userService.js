@@ -36,6 +36,7 @@ module.exports = function $userService(
       }
     );
 
+    eventRepository.log(events.USER_BANNED);
     logger.info({
       message: 'User banned',
       user: {
@@ -255,6 +256,7 @@ module.exports = function $userService(
       }
     );
 
+    eventRepository.log(events.USER_UNBANNED);
     logger.info({
       message: 'User unbanned',
       user: {
